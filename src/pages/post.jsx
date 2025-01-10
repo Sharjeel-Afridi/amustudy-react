@@ -18,7 +18,7 @@ const Post = () => {
   const [vote, setVote] = useState(null);
   const { postId } = useParams();
 
-  const { loggedinUser, userId } = useContext(UserContext);
+  const { loggedinUser, userInfo } = useContext(UserContext);
 
   const fetchLikes = async () => {
     try {
@@ -26,13 +26,13 @@ const Post = () => {
         filter: `postId = "${postId}"`,
       });
       const existingRecords = await pb.collection("likes").getFullList({
-        filter: `postId = "${postId}" && userId = "${userId}"`, // never forget: "${variableName}"
+        filter: `postId = "${postId}" && userId = "${userInfo.id}"`, // never forget: "${variableName}"
       });
-      // console.log(vote);
+      
       if (existingRecords.length > 0) {
         // User has already reacted with the same type, delete the reaction
         setVote(existingRecords[0].like);
-        // console.log(vote);
+        
       } else {
         setVote(null);
       }
@@ -52,9 +52,9 @@ const Post = () => {
       try {
         // Check if the user has already reacted with the same type
         const existingRecords = await pb.collection("likes").getFullList({
-          filter: `postId = "${postId}" && userId = "${userId}"`, // never forget: "${variableName}"
+          filter: `postId = "${postId}" && userId = "${userInfo.id}"`, // never forget: "${variableName}"
         });
-
+        
         let newNetLikes = netLikes;
 
         if (existingRecords.length > 0) {
@@ -76,7 +76,7 @@ const Post = () => {
 
             await pb.collection("likes").create({
               like: likeValue,
-              userId: userId,
+              userId: userInfo.id,
               postId: postId,
             });
             fetchLikes(); // Refresh the likes count after updating
@@ -89,7 +89,7 @@ const Post = () => {
           // Create a new reaction
           await pb.collection("likes").create({
             like: likeValue,
-            userId: userId,
+            userId: userInfo.id,
             postId: postId,
           });
           fetchLikes(); // Refresh the likes count after updating
@@ -197,7 +197,6 @@ const Post = () => {
           ></div>
           {post?.content &&
             post.content.map((element, index) => {
-              console.log("Element:", element); // Debug log
 
               if (element.type === "header") {
                 return (
