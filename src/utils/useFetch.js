@@ -55,7 +55,7 @@ const useFetchData = () => {
     fetchData();
   }, []);
 
-  return { posts, setPosts, events, showError };
+  return { posts, setPosts, events, showError, isLoading };
 };
 
 export default useFetchData;
