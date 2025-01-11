@@ -1,260 +1,150 @@
-// import Form from "./components/Form";
 import { useState, useEffect, useContext } from "react";
-import pb from "../lib/pocketbase";
-import Navbar from "./components/Navbar";
-import { formatDistanceToNow } from "date-fns";
-import Chevron from "../public/chevron.png";
 import { useNavigate } from "react-router-dom";
+import { useMediaQuery } from "react-responsive";
+import Navbar from "./components/Navbar";
+import LazyImage from "./components/LazyImage";
 import UserContext from "./utils/UserContext";
-import NewForm from "./components/NewForm";
-import image from "../public/159886.jpg";
+import useFetchData from "./utils/useFetch";
 import Plus from "../public/plus-black.png";
+import HomeIcon from "../public/homeBlack.png";
+import CalendarIcon from "../public/calendarBlack.png";
+import Events from "./components/Events";
+// import Footer from "./components/Footer";
+import userBlack from "../public/userBlack.png";
 
 export default function Home() {
-  const [posts, setPosts] = useState([]);
-  const [showForm, setShowForm] = useState(false);
-  const [tags, setTags] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [home, setHome] = useState(true);
+
+  const { posts, events, showError } = useFetchData();
   const navigate = useNavigate();
-
-  const { loggedinUser, userId, updateLoggedinUser } = useContext(UserContext);
-  // console.log(loggedinUser);
-  const handleShowForm = () => {
-    setShowForm(true);
-  };
-
-  const fetchLikes = async (postId) => {
-    try {
-      const records = await pb.collection("post_likes").getFullList({
-        filter: `postId = "${postId}"`,
-      });
-
-      if (records.length !== 0) {
-        return records[0].netLikes;
-      } else {
-        return 0;
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleReaction = async (postId, likeValue) => {
-    if (loggedinUser !== "") {
-      try {
-        // Optimistically update local state
-        const updatedPosts = posts.map((post) =>
-          post.id === postId
-            ? { ...post, netLikes: post.netLikes + likeValue }
-            : post
-        );
-        setPosts(updatedPosts);
-
-        // Check if the user has already reacted with the same type
-        const existingRecords = await pb.collection("likes").getFullList({
-          filter: `postId = "${postId}" && userId = "${userId}"`, // never forget: "${variableName}"
-        });
-
-        if (existingRecords.length > 0) {
-          // User has already reacted with the same type, delete the reaction
-          const recordId = existingRecords[0].id;
-          await pb.collection("likes").delete(recordId);
-        } else {
-          // Create a new reaction
-          await pb.collection("likes").create({
-            like: likeValue,
-            userId: userId,
-            postId: postId,
-          });
-        }
-        // Refresh the likes count for the post
-        const netLikes = await fetchLikes(postId);
-        const finalUpdatedPosts = posts.map((post) =>
-          post.id === postId ? { ...post, netLikes } : post
-        );
-        setPosts(finalUpdatedPosts);
-      } catch (error) {
-        console.log(error);
-        // Revert optimistic UI update on error
-        const revertedPosts = posts.map((post) =>
-          post.id === postId
-            ? { ...post, netLikes: post.netLikes - likeValue }
-            : post
-        );
-        setPosts(revertedPosts);
-      }
-    } else {
-      alert("You need to login to vote on the post.");
-    }
-  };
-
-  const postsList = async () => {
-    try {
-      const resultList = await pb.collection("posts").getList(
-        1,
-        10,
-        {
-          filter: 'created >= "2022-01-01 00:00:00"',
-          sort: "-created",
-          expand: "user, tags",
-        },
-        { requestKey: null }
-      );
-
-      // Update posts state with fetched data
-      setPosts(resultList.items);
-
-      // Initialize an array to store updated posts
-      const updatedPosts = [];
-
-      // Loop through each post and fetch likes sequentially
-      for (let post of resultList.items) {
-        try {
-          const netLikes = await fetchLikes(post.id);
-          post = { ...post, netLikes }; // Create a new object with updated netLikes
-        } catch (error) {
-          console.error(`Error fetching likes for post ${post.id}:`, error);
-          post = { ...post, netLikes: 0 }; // Default to 0 netLikes on error
-        }
-        updatedPosts.push(post); // Push updated post to the array
-      }
-
-      // Update state with the array of updated posts
-      setPosts(updatedPosts);
-    } catch (error) {
-      console.error("Error fetching posts:", error);
-    }
-  };
-
-  const tagsList = async () => {
-    try {
-      const records = await pb.collection("tags").getFullList({
-        sort: "-created",
-      });
-      setTags(records);
-    } catch (error) {
-      console.log("Tags Error: ", error);
-    }
-  };
-
-  updateLoggedinUser();
-  
-  useEffect(() => {
-    postsList();
-    tagsList();
-  }, []);
-
+  const { loggedinUser } = useContext(UserContext);
+  const isLargeScreen = useMediaQuery({ query: "(min-width: 768px)" });
+  // console.log(posts);
   const handlePostClick = (id) => {
     navigate(`/post/${id}`);
   };
 
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+  };
+
+  const filteredPosts = posts.filter((post) =>
+    post.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // useEffect(() => {
+  //   updateLoggedinUser();
+  // }, []); 
+  //commented this here because updating user in userContext don't remember why i commented the update in user context earlier
+
+  useEffect(() => {
+    if (isLargeScreen) {
+      setHome(true);
+    }
+  }, [isLargeScreen]);
+
   return (
     <>
-      <Navbar />
-      {showForm && (
-        <NewForm
-          refresh={postsList}
-          setShowForm={setShowForm}
-          tagsList={tags}
-        />
-      )}
-      <main className="min-h-screen w-[calc(100vw_-_6px)] flex flex-col sm:flex-row sm:items-start items-center bg-[#0e1116] text-white pb-[10vh]">
-        {/* <h1 className="font-bold text-3xl pt-10">AMUStudy</h1> */}
+      <Navbar search={true} onSearch={handleSearch} post={true} />
 
-        {/* <Form refresh={postsList}/> */}
-        <div className="flex flex-col gap-5 items-start mx-10 w-[90%] sm:w-[60%] mt-[15vh] rounded-md ">
-          <div className="flex justify-between items-center w-full pt-[5vh]">
-            <h1 className="text-[1.7rem] font-bold">Recent Posts</h1>
-            <button className={`bg-white h-fit ${loggedinUser === '' ? 'cursor-not-allowed' : 'cursor-pointer'}`} onClick={() => {
-              if (loggedinUser !== ''){
-                handleShowForm();
-              }
-              }}>
-              <img src={Plus} />
-            </button>
-          </div>
-          <div className="flex flex-wrap gap-5">
-            {posts.map((post, index) => (
-              <div
-                key={index}
-                className="md:w-[23vw] flex items-center py-5 px-2 my-2 bg-[#1c1f26] rounded-2xl border-[1px] border-transparent hover:border-white/20 "
-              >
+      {home ? (
+        <main className="min-h-screen w-[100vw] flex flex-col sm:flex-row sm:items-start items-center bg-primary text-primary-text font-lato overflow-hidden">
+          <div className="flex flex-col gap-5 items-start pl-2 sm:px-10 w-[100%] sm:w-[65%] pt-[15vh] pb-[10vh] rounded-md overflow-y-auto h-screen">
+            <h1 className="text-[1.7rem] font-bold pl-7">Recent Posts</h1>
+            <div className="flex flex-col gap-5 w-full text-sm font-bold">
+              {showError && (
+                <h1>Soemthing&apos;s wrong please comeback later!</h1>
+              )}
+              {filteredPosts.map((post, index) => (
                 <div
-                  onClick={() => handlePostClick(post.id)}
-                  className="w-[100%] flex flex-col gap-3 cursor-pointer"
+                  key={index}
+                  className="md:w-[100%] flex items-center sm:px-5 my-2 sm:bg-primary "
                 >
-                  <div className="flex gap-5 md:inline">
-                    <div>
-                      <h3 className="font-semibold text-2xl text-left px-2 pb-3 cursor-pointer">
-                        {post.title}
-                      </h3>
-                      {post.tags.length !== 0 && 
-                        post.expand?.tags.map((item, index) => (
-                          <span key={index} className="w-fit border-[1px] border-[#6a7180] text-[#6a7180] px-3 py-1 rounded-lg text-xs font-medium ">
-                            #{item.label}
+                  <div
+                    onClick={() => handlePostClick(post.id)}
+                    className="w-full flex justify-between gap-0 cursor-pointer pb-2 border-b-[1px] "
+                  >
+                    <div className="flex sm:flex-row flex-col gap-5 sm:gap-0 w-3/4 md:inline">
+                      <div>
+                        <div className="flex items-center gap-3 mb-[16px] pl-2">
+                          <div className="flex items-center justify-center h-[20px] w-[20px] border-[1px] border-gray-500 rounded-full overflow-hidden">
+                            <img 
+                               src={`${post?.expand?.user?.avatarUrl ? post.expand.user.avatarUrl : userBlack}`}
+                              className="w-[20px]" />
+                          </div>
+                          <span className="font-normal text-[13px]">
+                            {post?.expand?.user?.username}
                           </span>
-                        )
-                        )
-                        }
-                      <p className="text-[#6a7180] mb-4 px-2 pt-3 text-sm font-medium">
-                        {formatDistanceToNow(new Date(post.created))} ago •{" "}
-                        <span className="font-medium">
-                          {post?.expand?.user?.username}
-                        </span>
-                      </p>
-                    </div>
-                    {/* <p className="mb-4 text-left px-2">{post.text.slice(0, 300)}</p> */}
-                    {post.image !== '' ? (
-                      <div className="w-full h-[25vh] overflow-hidden flex items-center rounded-lg">
-                        <img src={`https://amustud.pockethost.io/api/files/${post.collectionId}/${post.id}/${post.image}`} alt="Post" className=" " />
+                        </div>
+                        <h3 className="font-bold text-[20px] sm:text-2xl leading-[24px] text-left px-2 cursor-pointer">
+                          {post.title}
+                        </h3>
+                        <p className="mb-4 text-left text-[16px] font-medium text-gray-600 px-2 pt-[8px]">
+                          {post.text.slice(0, 70)}...
+                        </p>
+                        <p className="text-[#6a7180] mb-4 px-2 text-sm font-medium">
+                          {new Date(post.created).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                          })}
+                        </p>
                       </div>
-                    ) : (
-                      <img
-                        src={image}
-                        className="rounded-xl mt-5 md:w-fit w-[40%]"
+                    </div>
+                    {post.image !== "" && (
+                      <LazyImage
+                        src={`https://amustud.pockethost.io/api/files/${post.collectionId}/${post.id}/${post.image}`}
+                        alt="Post"
+                        className="sm:h-[25vh] h-[25vw] w-[25vw] sm:w-1/4 flex items-center sm:px-0 pt-[36px] pr-2 rounded-lg"
                       />
                     )}
                   </div>
-                  <div className="flex items-center gap-2 bg-[#282b35] text-[#6a7180] font-bold w-fit rounded-xl">
-                    <img
-                      src={Chevron}
-                      className="w-[40px] rotate-[90deg] p-2 rounded-md hover:bg-[#e2e2e6] cursor-pointer"
-                      onClick={() => handleReaction(post.id, 1)}
-                    />
-
-                    <span>{post.netLikes}</span>
-                    <img
-                      src={Chevron}
-                      className="w-[40px] rotate-[-90deg] p-2 rounded-md hover:bg-[#e2e2e6] cursor-pointer"
-                      onClick={() => handleReaction(post.id, -1)}
-                    />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="flex flex-col items-center gap-10">
-          {/* <Form refresh={postsList}/> */}
-
-          <div className="flex flex-col items-start  sm:h-[30vh] mx-3 md:mr-5 mt-[15vh] rounded-md border-[1px] border-[#1c1f26] px-5">
-            <h1 className="text-[1.7rem] font-bold pt-[5vh] mb-5">Top Tags</h1>
-            <div className="flex flex-wrap">
-              {tags.map((tag, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between w-full sm:w-1/3 px-2 mb-4"
-                >
-                  <span className="px-3 py-1 rounded-full text-sm font-medium">
-                    {tag.label}
-                  </span>
-                  <span className="text-sm pl-0">{tag.count}</span>
                 </div>
               ))}
             </div>
           </div>
-          
+
+          <Events events={events} mobile={false} />
+        </main>
+      ) : (
+        <Events events={events} mobile={true} />
+      )}
+
+      <div className="fixed bottom-0 sm:hidden flex items-center justify-around w-full h-[10vh] bg-primary text-primary-text border-t-[1px] border-primary-dark">
+        <div
+          className={`flex flex-col items-center cursor-pointer border-b-[3px] ${
+            home ? "border-primary-text" : "border-transparent"
+          }`}
+          onClick={() => setHome(true)}
+        >
+          <img src={HomeIcon} className="h-[30px] w-fit" />
+          <span className="text-[12px] text-primary-text">Home</span>
         </div>
-      </main>
+        <div>
+          <button
+            className="sm:hidden inline rounded-lg border border-transparent px-4 py-2 text-base font-medium bg-white transition-colors duration-200  focus:outline focus:outline-[4px] focus:outline-auto focus:outline-webkit-focus-ring-color"
+            onClick={() => {
+              if (loggedinUser !== "") {
+                navigate("/new");
+              } else {
+                navigate("/login");
+              }
+            }}
+          >
+            <img src={Plus} />
+          </button>
+        </div>
+        <div
+          className={`flex flex-col items-center cursor-pointer border-b-[3px] ${
+            home ? "border-transparent" : "border-primary-text"
+          }`}
+          onClick={() => setHome(false)}
+        >
+          <img src={CalendarIcon} className="h-[30px] w-fit" />
+          <span className="text-[12px] text-primary-text">Calendar</span>
+        </div>
+      </div>
+      {/* <Footer /> */}
     </>
   );
 }

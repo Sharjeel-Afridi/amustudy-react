@@ -39,7 +39,18 @@ h1 {
   line-height: 1.1;
 }
 
-button {
+.ce-toolbar{
+  margin: 0 20;
+}
+@media (min-width: 758px) {
+  .ce-block__content {
+    margin: 0 40px;
+  }
+}
+.ce-header{
+  font-size: 42px;
+}
+/* button {
   border-radius: 8px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
@@ -56,7 +67,7 @@ button:hover {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
-}
+} */
 
 @media (prefers-color-scheme: light) {
   :root {
@@ -82,7 +93,7 @@ button:focus-visible {
 }
 
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 0px;
 }
 
 ::-webkit-scrollbar-track {

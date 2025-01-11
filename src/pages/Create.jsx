@@ -11,18 +11,18 @@ const Create = () => {
   const [loading, setLoading] = useState(false);
 
   const { loggedinUser, userId } = useContext(UserContext);
-  let allTags;
-  const tagsList = async () => {
-    try {
-      const records = await pb.collection("tags").getFullList({
-        sort: "-created",
-      });
-      setTags(records);
-      allTags = tagsList?.map((item) => item.label);
-    } catch (error) {
-      console.log("Tags Error: ", error);
-    }
-  };
+  // let allTags;
+  // const tagsList = async () => {
+  //   try {
+  //     const records = await pb.collection("tags").getFullList({
+  //       sort: "-created",
+  //     });
+  //     setTags(records);
+  //     allTags = tagsList?.map((item) => item.label);
+  //   } catch (error) {
+  //     console.log("Tags Error: ", error);
+  //   }
+  // };
 
   useEffect(() => {
     if (photo) {
@@ -51,18 +51,18 @@ const Create = () => {
 
   };
 
-  const handleTagChange = (e) => {
-    const selectedTag = tagsList.find(tag => tag.label === e.target.value);
-    if (selectedTag && !tags.some(tag => tag.id === selectedTag.id)) {
-      setTags([...tags, selectedTag]);
-    }
-  };
+  // const handleTagChange = (e) => {
+  //   const selectedTag = tagsList.find(tag => tag.label === e.target.value);
+  //   if (selectedTag && !tags.some(tag => tag.id === selectedTag.id)) {
+  //     setTags([...tags, selectedTag]);
+  //   }
+  // };
   
 
 
-  const handleRemoveTag = (tagToRemove) => {
-    setTags(tags.filter((tag) => tag !== tagToRemove));
-  };
+  // const handleRemoveTag = (tagToRemove) => {
+  //   setTags(tags.filter((tag) => tag !== tagToRemove));
+  // };
 
   // const incrementTagCounter = async (tag) => {
   //   try {
@@ -97,7 +97,9 @@ const Create = () => {
     // formData.append('user', userId);
     // formData.append('title', title);
     // formData.append('text', inputText);
-    const tagIds = tags.map(elem => elem.id);
+
+    // const tagIds = tags.map(elem => elem.id);
+
     // console.log(tagIds);
     // const arraySome = ['rkdhb8hhd006e3c']
     // formData.append('tags', arraySome);
@@ -112,7 +114,7 @@ const Create = () => {
           'user': userId,
           'title': title,
           'text': inputText,
-          'tags': tagIds,
+          // 'tags': tagIds,
           'image': photo
         });
         // Increment counters for each tag used
@@ -122,7 +124,7 @@ const Create = () => {
         // Clear the form after successful post
         setTitle('');
         setInputText('');
-        setTags([]);
+        // setTags([]);
         setPhoto(null);
         setPhotoURL(null);
 
@@ -139,11 +141,11 @@ const Create = () => {
 
   return (
     // <div className="flex justify-center items-center w-screen h-screen bg-black/30 z-10">
-      <div id="form" className='w-full bg-[#1c1f26] p-3 text-white font-medium shadow rounded-md' onClick={(e) => e.stopPropagation()}>
+      <div id="form" className='w-full bg-primary-light p-3 text-primary-text font-medium shadow rounded-md' onClick={(e) => e.stopPropagation()}>
         <div className="flex flex-col items-center justify-start gap-4 mb-4">
           <input
             type="text"
-            className='w-full border-[1px] border-white/10 rounded-md p-2 bg-[#1c1f26] focus:outline-none'
+            className='w-full border-[1px] border-white/10 rounded-md p-2 bg-primary-light focus:outline-none'
             placeholder="Title"
             value={title}
             rows='2'
@@ -151,23 +153,26 @@ const Create = () => {
           />
           <textarea
             type="text"
-            className='w-full border-[1px] border-white/10 rounded-md resize-y ml-0 p-2 bg-[#1c1f26] focus:outline-none'
+            className='w-full border-[1px] border-white/10 rounded-md resize-y ml-0 p-2 bg-primary-light focus:outline-none'
             placeholder="Start a post"
             value={inputText}
             rows='6'
             onChange={handleTextChange}
           />
-          <select
-            className="w-full border-[1px] border-white/10 rounded-md p-2 bg-[#1c1f26] focus:outline-none mt-2"
+          {/* <select
+            className="w-full border-[1px] border-white/10 rounded-md p-2 bg-primary-light focus:outline-none mt-2"
             onChange={handleTagChange}
           >
-            <option value="">Select a tag</option>
-            {/* {allTags.map((tag, index) => (
-              <option key={index} value={tag}>
-                {tag}
-              </option>
-            ))} */}
-          </select>
+            // <option value="">Select a tag</option>
+            // {allTags.map((tag, index) => (
+            //   <option key={index} value={tag}>
+            //     {tag}
+            //   </option>
+            ))} 
+          </select> */}
+          <div>
+            <p>Add this to calendar</p>
+          </div>
           <div className="flex flex-wrap gap-2 mt-2">
             {tags.map((tag, index) => (
               <div key={index} className="bg-[#151515] px-3 py-1 rounded-full text-sm font-medium flex items-center">
@@ -209,7 +214,7 @@ const Create = () => {
           </label>
           <button
             onClick={handlePost}
-            className='px-4 py-2 text-white'
+            className='px-4 py-2 text-primary-text'
           >
             {loading ? "Uploading.." : "Post"}
           </button>
