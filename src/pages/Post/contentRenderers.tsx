@@ -14,16 +14,19 @@ export const renderParagraph = (element, index) => {
     <p
       key={`${element?.data?.text}_${index}`}
       className="py-5 text-[18px] sm:text-[20px] text-primary-post font-source -tracking-[0.009em] leading-[32px]"
-    >
-      {element?.data?.text}
+      dangerouslySetInnerHTML={{ __html: element.data.text }}
+      >
     </p>
   );
 };
 
 export const renderListItems = (items) => {
   return items?.map((item, index) => (
-    <li key={`LIST_ITEM_${index}`} className="mb-1">
-      {item?.content}
+    <li 
+      key={`LIST_ITEM_${index}`} 
+      className="mb-1"
+      dangerouslySetInnerHTML={{ __html: item?.content}}
+    >
     </li>
   ));
 };
@@ -53,7 +56,7 @@ export const renderChecklistItem = (item, index) => (
     ) : (
       <div className="size-4 rounded border-gray-400" />
     )}
-    <span>{item?.content}</span>
+    <span dangerouslySetInnerHTML={{ __html:item?.content}}></span>
   </li>
 );
 
