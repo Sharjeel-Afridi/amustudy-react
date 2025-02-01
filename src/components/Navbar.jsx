@@ -15,6 +15,9 @@ import {
   MenuItem,
   Transition,
 } from "@headlessui/react";
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input" 
+ 
 
 const Navbar = ({ search, onSearch, post }) => {
   Navbar.propTypes = {
@@ -44,7 +47,7 @@ const Navbar = ({ search, onSearch, post }) => {
   };
 
   return (
-    <div className="sm:h-[10vh] w-[calc(100vw-8px)] flex justify-between items-center text-[15px] sm:text-[1.2rem] bg-primary border-b-[1px] border-primary-dark fixed  px-4 sm:px-10 font-medium z-10">
+    <div className="sm:h-[10vh] w-[calc(100vw-8px)] flex justify-between items-center text-[15px] sm:text-[1.2rem] bg-background border-b-[1px] border-primary-dark fixed  px-4 sm:px-10 font-medium z-10">
       <Link
         to="/"
         className="hover:text-primary-text  font-bold text-primary-text"
@@ -67,18 +70,20 @@ const Navbar = ({ search, onSearch, post }) => {
           </button>
         )}
         {search && (
-          <input
-            type="text"
-            className="sm:inline hidden styled-input w-[30vw] py-2 pl-3 bg-primary-light  rounded-md focus:outline-none"
-            placeholder="Search AMUStudy"
+          <div className="hidden sm:flex w-full max-w-sm items-center space-x-2">
+           <Input 
+            type="email" 
+            placeholder="Search" 
             value={inputText}
-            onChange={handleTextChange}
-          />
+            onChange={handleTextChange} 
+            />
+            <Button type="submit">Search</Button>
+          </div>
         )}
         {loggedinUser !== "" ? (
           <Menu as="div" className="relative ml-3">
             <div>
-              <MenuButton className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+              <MenuButton className="flex rounded-full bg-gray-800 text-sm my-1 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                 <span className="sr-only">Open user menu</span>
                 {userInfo?.avatarUrl ? (
                   <img
@@ -163,7 +168,7 @@ const Navbar = ({ search, onSearch, post }) => {
         ) : (
           <Link
             to={"/login"}
-            className="rounded-lg border border-transparent my-1 sm:my-0 px-4 py-2 sm:text-base font-medium bg-primary-light cursor-pointer transition-colors duration-200 hover:border-[#646cff] focus:outline focus:outline-[4px] focus:outline-auto focus:outline-webkit-focus-ring-color text-primary-text hover:text-primary-text/90"
+            className="rounded-lg border border-transparent my-1 sm:my-0 px-4 py-2 sm:text-base font-medium bg-background-light cursor-pointer transition-colors duration-200 hover:border-[#646cff] focus:outline focus:outline-[4px] focus:outline-auto focus:outline-webkit-focus-ring-color text-primary-text hover:text-primary-text/90"
           >
             Login
           </Link>

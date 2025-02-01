@@ -119,7 +119,7 @@ const NewFormPage = () => {
   return (
     <>
       <Navbar search={false} />
-      <div className="flex justify-center items-center w-screen min-h-screen px-3 pt-20 pb-10 bg-primary text-primary-text  font-medium">
+      <div className="flex justify-center items-center w-screen min-h-screen px-3 pt-20 pb-10 bg-background text-primary-text  font-medium">
         <div id="form" className="sm:p-3 sm:w-[60%]">
           <div className="flex flex-col items-center justify-start gap-4 mb-4">
             <input
@@ -220,7 +220,7 @@ const NewFormPage = () => {
             <div className="flex flex-col w-full px-2">
               <label className="mb-2">Venue</label>
               <select
-                className="w-full border-[1px] border-white/10 rounded-md p-2 bg-primary-light  focus:border-transparent focus:ring-transparent"
+                className="w-full border-[1px] border-white/10 rounded-md p-2 bg-background-light  focus:border-transparent focus:ring-transparent"
                 onChange={(e) => setVenue(e.target.value)}
               >
                 <option value="Online">Online</option>
@@ -229,7 +229,7 @@ const NewFormPage = () => {
               {venue === "physical" && (
                 <input
                   type="text"
-                  className="w-full border-[1px] border-white/10 rounded-md p-2 bg-primary-light  focus:border-transparent focus:ring-transparent mt-2"
+                  className="w-full border-[1px] border-white/10 rounded-md p-2 bg-background-light  focus:border-transparent focus:ring-transparent mt-2"
                   placeholder="Enter Venue"
                   value={venueDetails}
                   onChange={(e) => setVenueDetails(e.target.value)}

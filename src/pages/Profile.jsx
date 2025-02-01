@@ -67,7 +67,7 @@ export default function Profile() {
   return (
     <>
     <Navbar />
-    <div className="w-screen min-h-screen pt-[15vh] bg-primary text-primary-text p-4">
+    <div className="w-screen min-h-screen pt-[15vh] bg-background text-primary-text p-4">
       <form className="space-y-8 divide-y divide-gray-200">
         <div className="space-y-8 divide-y divide-gray-200 sm:space-y-5">
           <div>

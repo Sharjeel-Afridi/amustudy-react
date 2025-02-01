@@ -6,7 +6,7 @@ const Events = ({ events, mobile }) => {
   const navigate = useNavigate();
 
   const wideScreenStyle = "hidden sm:flex flex-col items-center w-[90%] sm:w-[20%] h-screen border-l-[1px] border-primary-dark overflow-y-auto text-primary-text pl-5";
-  const mobileScreenStyle = "flex flex-col items-center w-[calc(100vw-6px)] min-h-screen bg-primary text-primary-text";
+  const mobileScreenStyle = "flex flex-col items-center w-[calc(100vw-6px)] min-h-screen bg-background text-primary-text";
 
   const handleEventClick = (id) => {
     navigate(`/post/${id}`);
