@@ -8,6 +8,7 @@ import { PostImage } from "./PostImage";
 import { PostContent } from "./PostContent";
 import { usePbFetchLike } from "../../Hooks/usePbFetchLike";
 import { usePbFetchSinglePost } from "../../Hooks/usePbFetchSinglePost";
+import PostSkeleton from "../../components/skeletons/PostSkeleton";
 
 const Post = () => {
   const { postId } = useParams();
@@ -32,7 +33,12 @@ const Post = () => {
 
   // Loading state
   if (!!isPostLoading) {
-    return <div>Loading...</div>;
+    return (
+      <>
+        <Navbar />
+        <PostSkeleton />
+      </>
+    );
   }
 
   // Error state

@@ -5,8 +5,8 @@ import React from 'react';
 const Events = ({ events, mobile }) => {
   const navigate = useNavigate();
 
-  const wideScreenStyle = "hidden sm:flex flex-col items-center w-[90%] sm:w-[20%] h-screen border-l-[1px] border-primary-dark overflow-y-auto text-primary-text pl-5";
-  const mobileScreenStyle = "flex flex-col items-center w-[calc(100vw-6px)] min-h-screen bg-background text-primary-text";
+  const wideScreenStyle = "hidden sm:flex flex-col items-center gap-10 w-[90%] sm:w-[20%] h-screen border-l-[1px] border-primary-dark overflow-y-auto text-primary-text pl-5 pt-[15vh]";
+  const mobileScreenStyle = "flex flex-col items-center w-[calc(100vw-6px)] min-h-screen gap-10 bg-background text-primary-text mb-[15vh] pt-[15vh]";
 
   const handleEventClick = (id) => {
     navigate(`/post/${id}`);
@@ -14,10 +14,10 @@ const Events = ({ events, mobile }) => {
 
   return (
     <div className={`${mobile ? mobileScreenStyle : wideScreenStyle}`}>
-      <h1 className="sm:text-[17px] text-[20px] font-bold pt-[15vh] w-full pl-4">
+      <h1 className="sm:text-[17px] text-[20px] font-bold w-full pl-4">
         Events Calendar
       </h1>
-      <div className="flex flex-col gap-4 w-full pt-10 rounded-md px-4">
+      <div className="flex flex-col gap-4 w-full rounded-md px-4">
         {events.map((event, index) => (
           <div 
             key={index} 
