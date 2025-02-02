@@ -45,8 +45,8 @@ export default function Home() {
 
       {home ? (
         <main className="min-h-screen w-[100vw] flex flex-col sm:flex-row sm:items-start items-center bg-background text-primary-text font-lato overflow-hidden">
-          <div className="flex flex-col gap-5 items-start pl-2 sm:px-10 w-[100%] sm:w-[65%] pt-[15vh] pb-[10vh] rounded-md overflow-y-auto h-screen">
-            <h1 className="text-[1.7rem] font-bold pl-7">Recent Posts</h1>
+          <div className="flex flex-col gap-5 items-start pl-2 sm:px-10 w-[100%] sm:w-[72%] pt-[15vh] pb-[10vh] rounded-md overflow-y-auto h-screen">
+            <h1 className="text-[1.7rem] font-bold pl-2 sm:pl-7">Recent Posts</h1>
             {isLoading ? (
               <HomeSkeleton />
             ) : (
@@ -64,7 +64,7 @@ export default function Home() {
                       className="w-full flex flex-col justify-between gap-0 cursor-pointer pb-2 border-b-[1px] "
                     >
                       <div className="flex flex-col gap-5 sm:gap-0 md:inline">
-                        <div className="flex flex-row sm:items-center items-start justify-between gap-3 pb-5 pl-2">
+                        <div className="flex flex-row sm:items-center items-start justify-between gap-3 pb-5 px-2">
                           <div className="flex items-center gap-3">
                             <div className="flex items-center sm:h-[20px] sm:w-[20px] h-[40px] w-[40px] border-[1px] border-gray-500 rounded-full overflow-hidden">
                               <img
@@ -98,12 +98,12 @@ export default function Home() {
                         </div>
                       </div>
                       <div className="flex justify-between">
-                        <div>
+                        <div className="w-full sm:w-3/4">
                           <h3 className="font-bold text-[20px] sm:text-2xl leading-[24px] text-left px-2 cursor-pointer">
                             {post.title}
                           </h3>
                           <p className="mb-4 text-left text-[16px] font-medium text-gray-600 px-2 pt-[8px]">
-                            {post.text.slice(0, 70)}...
+                            {post.text.slice(0, 200)}...
                           </p>
                         </div>
                         {post.image !== "" && (
@@ -117,7 +117,7 @@ export default function Home() {
                         )}
                       </div>
                       {post.image !== "" && (
-                          <div className="sm:h-[25vh] h-fit w-full sm:w-1/4 sm:hidden flex items-center sm:px-0 pr-2 rounded-lg">
+                          <div className="h-fit w-[70%] sm:hidden flex items-center sm:px-0 pr-2 rounded-lg">
                             <img
                               src={`https://amustud.pockethost.io/api/files/${post.collectionId}/${post.id}/${post.image}`}
                               className="w-full h-full object-cover sm:rounded-xs rounded-lg"
