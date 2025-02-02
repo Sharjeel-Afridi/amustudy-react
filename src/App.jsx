@@ -10,36 +10,7 @@ import HomeIcon from "../public/homeBlack.png";
 import CalendarIcon from "../public/calendarBlack.png";
 import MemoizedEvents from "./components/Events";
 import userBlack from "../public/userBlack.png";
-
-const Skeleton = () => {
-  return (
-    <div className="flex flex-col gap-5 w-full text-sm font-bold">
-      {Array.from({ length: 3 }).map((_, index) => (
-        <div
-          key={index}
-          className="md:w-[100%] flex items-center sm:px-5 my-2 sm:bg-background "
-        >
-          <div className="w-full flex justify-between gap-0 cursor-pointer pb-2 border-b-[1px] ">
-            <div className="flex sm:flex-row flex-col gap-5 sm:gap-0 w-3/4 md:inline">
-              <div>
-                <div className="flex items-center gap-3 mb-[16px] pl-2">
-                  <div className="h-[20px] w-[20px] bg-gray-200 rounded-full"></div>
-                  <span className="w-[100px] h-[15px] bg-gray-300"></span>
-                </div>
-                <h3 className="px-2 w-[300px] h-[20px] bg-gray-300"></h3>
-                <h3 className="px-2 mt-2 w-[200px] h-[20px] bg-gray-300"></h3>
-                <p className="w-[250px] h-[15px] mb-4 bg-gray-200 px-2 mt-2"></p>
-              </div>
-            </div>
-            <div className="sm:h-[25vh] h-[25vw] w-[25vw] sm:w-1/4 flex items-center sm:px-0 pt-[36px] pr-2 rounded-lg">
-              <div className="w-full h-full object-cover rounded-xs bg-gray-200"></div>
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-};
+import HomeSkeleton from "./components/skeletons/HomeSkeleton";
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -77,7 +48,7 @@ export default function Home() {
           <div className="flex flex-col gap-5 items-start pl-2 sm:px-10 w-[100%] sm:w-[65%] pt-[15vh] pb-[10vh] rounded-md overflow-y-auto h-screen">
             <h1 className="text-[1.7rem] font-bold pl-7">Recent Posts</h1>
             {isLoading ? (
-              Skeleton()
+              <HomeSkeleton />
             ) : (
               <div className="flex flex-col gap-5 w-full text-sm font-bold">
                 {showError && (
