@@ -5,11 +5,11 @@ import Navbar from "./components/Navbar";
 import LazyImage from "./components/LazyImage";
 import UserContext from "./utils/UserContext";
 import useFetchData from "./utils/useFetch";
-import Plus from "../public/plus-black.png";
-import HomeIcon from "../public/homeBlack.png";
-import CalendarIcon from "../public/calendarBlack.png";
+import Plus from "/plus-black.png";
+import HomeIcon from "/homeBlack.png";
+import CalendarIcon from "/calendarBlack.png";
 import MemoizedEvents from "./components/Events";
-import userBlack from "../public/userBlack.png";
+import userBlack from "/userBlack.png";
 import HomeSkeleton from "./components/skeletons/HomeSkeleton";
 
 export default function Home() {

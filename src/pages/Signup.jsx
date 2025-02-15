@@ -2,7 +2,7 @@ import { useState } from 'react';
 import useCreateUser from '../utils/useCreateUser';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-import Google from '../../public/google.png';
+import Google from '/google.png';
 
 
 const Signup = () => {

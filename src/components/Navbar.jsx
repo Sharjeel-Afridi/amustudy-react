@@ -4,9 +4,9 @@ import { Link } from "react-router-dom";
 import UserContext from "../utils/UserContext";
 import { useContext } from "react";
 import useLogout from "../utils/useLogout";
-import ProfilePic from "../../public/profile.png";
+import ProfilePic from "/profile.png";
 import { useNavigate } from "react-router-dom";
-import Plus from "../../public/plus-black.png";
+import Plus from "/plus-black.png";
 import { Fragment } from "react";
 import {
   Menu,

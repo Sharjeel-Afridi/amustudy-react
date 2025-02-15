@@ -1,6 +1,6 @@
 import React from "react";
 import { formatDistanceToNow } from "date-fns";
-import userBlack from "../../../public/user-black.png";
+import userBlack from "/user-black.png";
 
 export const PostHeader = ({ title, username, updatedAt }) => (
   // <div className="flex flex-col gap-5">

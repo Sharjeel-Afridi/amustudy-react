@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import useLogin from "../utils/useLogin";
 import { Link } from "react-router-dom";
-import Google from '../../public/google.png';
+import Google from '/google.png';
 
 
 

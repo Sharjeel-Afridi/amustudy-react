@@ -4,7 +4,9 @@ import App from './App.jsx';
 import Post from "./pages/Post/Post.jsx";
 import Login from './pages/Login.jsx';
 import Signup from './pages/Signup.jsx';
-import Profile from './pages/Profile.jsx';
+import Profile from './pages/Settings.jsx';
+import Settings from './pages/Settings.jsx';
+import Event from './pages/Event.tsx';
 import { UserProvider } from "./utils/UserContext";
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import './index.css'
@@ -40,8 +42,16 @@ const appRouter = createBrowserRouter([
         element:<NewFormPage />
       },
       {
+        path: "/setting",
+        element: <Settings />
+      },
+      {
         path: "/profile",
         element: <Profile />
+      },
+      {
+        path: "/event",
+        element: <Event />
       }
     ]
   }

@@ -48,7 +48,10 @@ export default {
   				muted: '#6a7180'
   			},
   			border: 'hsl(var(--border))',
-  			background: 'hsl(var(--background))',
+  			background: {
+				DEFAULT: 'hsl(var(--background))',
+				light:'#f9fafc',
+			},
   			foreground: 'hsl(var(--foreground))',
   			card: {
   				DEFAULT: 'hsl(var(--card))',
