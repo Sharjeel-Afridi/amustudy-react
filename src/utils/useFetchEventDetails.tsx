@@ -27,8 +27,7 @@ export default function useFetchEventDetails(eventId: string | undefined) {
       setError(null);
       try {
         const res = await fetch(
-          `https://amuroboclub.pockethost.io/api/collections/events/records/b4nqab2d376f7kg`
-        //   `https://amuroboclub.pockethost.io/api/collections/events/records/${eventId}`
+          `https://amustud.pockethost.io/api/collections/events/records/${eventId}`
         );
         if (!res.ok) {
           throw new Error(`Failed to fetch event: ${res.statusText}`);

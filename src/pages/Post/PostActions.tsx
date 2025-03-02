@@ -1,4 +1,5 @@
 import React from "react";
+import clap from "../../assets/clap.svg";
 
 export const PostActions = ({ netLikes, vote, onLike }) => {
   const handleCopy = () => {
@@ -18,7 +19,7 @@ export const PostActions = ({ netLikes, vote, onLike }) => {
     <div className="flex items-center justify-between border-y-[1px] border-primary-dark">
       <div className="flex items-center">
         <img
-          src={"/src/assets/clap.svg"}
+          src={clap}
           alt="Clap Icon"
           className={`size-[40px] p-2 hover:rounded-full hover:bg-blue-600/40 cursor-pointer 
           ${vote === 1 ? "bg-blue-600 rounded-full" : ""}`}

@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { X, PlusCircle, Loader2 } from "lucide-react";
 import useFetchEventDetails  from "@/utils/useFetchEventDetails";
 import pb from "../../lib/pocketbase.js";
+import { useParams } from "react-router-dom";
 
 const generateTeamCode = () => {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -23,9 +24,9 @@ const generateTeamCode = () => {
 };
 
 const Event = () => {
-  const { event, loading, error } = useFetchEventDetails('1');
+  const { eventId } = useParams();
+  const { event, loading, error } = useFetchEventDetails(eventId);
   // const { event, loading, error } = useFetchEventDetails(params.id);
-
   const handleSubmitRegistration = async (e: React.FormEvent) => {
     e.preventDefault();
     // setIsRegistering(true);
@@ -51,7 +52,9 @@ const Event = () => {
     // }
   };
   return (
-    <div className="">
+    <div className="w-screen flex flex-col items-center mx-auto p-4">
+      <div className="w-[60%]">
+
       <CardHeader>
           <CardTitle className="text-3xl mt-4">{event?.name}</CardTitle>
           <CardDescription>
@@ -92,7 +95,8 @@ const Event = () => {
             <strong>Location:</strong> {event?.location}
           </div>
         </CardContent>
-      <Card className="mt-6">
+        </div>
+      <Card className="mt-6 w-[60%]">
         <CardHeader>
           <CardTitle>Event Registration</CardTitle>
           <CardDescription>

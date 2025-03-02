@@ -47,7 +47,7 @@ const Navbar = ({ search, onSearch, post }) => {
   };
 
   return (
-    <div className="sm:h-[10vh] w-[calc(100vw-8px)] flex justify-between items-center text-[15px] sm:text-[1.2rem] bg-background border-b-[1px] border-primary-dark fixed  px-4 sm:px-10 font-medium z-10">
+    <div className="sm:h-[10vh] w-[calc(100vw-8px)] fixed top-0 flex justify-between items-center text-[15px] sm:text-[1.2rem] bg-background border-b-[1px] border-primary-dark  px-4 sm:px-10 font-medium z-10">
       <Link
         to="/"
         className="hover:text-primary-text  font-bold text-primary-text"

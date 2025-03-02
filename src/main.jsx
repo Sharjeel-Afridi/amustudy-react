@@ -11,6 +11,8 @@ import { UserProvider } from "./utils/UserContext";
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import './index.css'
 import NewFormPage from './pages/formpage.jsx';
+import CreateEvent from './pages/CreateEvent.tsx';
+import EventsList from './pages/EventsList.tsx';
 
 const appRouter = createBrowserRouter([
   {
@@ -50,8 +52,16 @@ const appRouter = createBrowserRouter([
         element: <Profile />
       },
       {
-        path: "/event",
+        path: "/event/:eventId",
         element: <Event />
+      },
+      {
+        path: "/events",
+        element: <EventsList />
+      },
+      {
+        path: "/create",
+        element: <CreateEvent />
       }
     ]
   }
