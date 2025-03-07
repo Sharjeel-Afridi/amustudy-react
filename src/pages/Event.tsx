@@ -35,7 +35,7 @@ const Event = () => {
   const [showRegistration, setShowRegistration] = useState(false);
   const [newTeammate, setNewTeammate] = useState("");
   const [isRegistering, setIsRegistering] = useState(false);
-  
+  const [registrationKey, setRegistrationKey] = useState(0);
 
   const {userInfo} = useContext(UserContext);
 
@@ -60,7 +60,7 @@ const Event = () => {
             const user = await pb
               .collection("users")
               .getFirstListItem(`id="${id}"`);
-            return { id: id, name: user.name };
+            return { id: id, name: user.username };
           })
         );
 
@@ -69,11 +69,11 @@ const Event = () => {
       } else {
         setTeamName("");
         setTeamCode("");
-        setTeam([{ id: userInfo.id, name: userInfo.name }]);
+        setTeam([{ id: userInfo.id, name: userInfo.username }]);
       }
     } catch (error) {
       console.error("Error fetching registration:", error);
-      setTeam([{ id: userInfo.id, name: userInfo.name }]);
+      setTeam([{ id: userInfo.id, name: userInfo.username }]);
     }
   };
 
@@ -119,6 +119,16 @@ const Event = () => {
     try {
       const generatedTeamCode = generateTeamCode();
       // Registration logic
+      await pb.collection("eventRegistrations").create({
+        event: event?.id,
+        teamName: teamName,
+        teamMembers: team.map((member) => member.id),
+        teamCode: generatedTeamCode,
+        leader: userInfo?.id,
+      });
+      setTeamCode(generatedTeamCode);
+      setShowRegistration(false);
+      setRegistrationKey((prev) => prev + 1);
       alert(`Your team "${teamName}" has been registered for ${event?.name}`);
     } catch {
       alert("Error registering your team.");
@@ -126,6 +136,7 @@ const Event = () => {
       setIsRegistering(false);
     }
   };
+
 
   if (loading) {
     return (
@@ -217,6 +228,9 @@ const Event = () => {
               {event.teamSize !== 1 && (
                 <div className="space-y-2">
                   <Label className="text-base">Team Name</Label>
+                  {showRegistration ? (
+                    <h3 className="font-bold text-xl">{teamName}</h3>
+                ): (
                   <Input
                     value={teamName}
                     onChange={(e) => setTeamName(e.target.value)}
@@ -224,6 +238,7 @@ const Event = () => {
                     className="bg-background"
                     required
                   />
+                )}
                 </div>
               )}
               
@@ -245,7 +260,7 @@ const Event = () => {
                           </span>
                         )}
                       </span>
-                      {!member.isLeader && (
+                      {!showRegistration && !member.isLeader && (
                         <Button
                           variant="ghost"
                           size="sm"
@@ -259,7 +274,7 @@ const Event = () => {
                 </ul>
               </div>
               
-              {team.length < (event.teamSize || 1) && (
+              {!showRegistration && team.length < (event.teamSize || 1) && (
                 <div className="flex space-x-2">
                   <Input
                     value={newTeammate}
@@ -281,12 +296,12 @@ const Event = () => {
               <Button
                 type="submit"
                 className="w-full mt-4"
-                disabled={isRegistering}
+                disabled={isRegistering || showRegistration}
               >
                 {isRegistering && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
-                {isRegistering ? "Registering..." : "Register"}
+                {showRegistration ? "Registered" : isRegistering ? "Registering..." : "Register"}
               </Button>
             </form>
           </div>
