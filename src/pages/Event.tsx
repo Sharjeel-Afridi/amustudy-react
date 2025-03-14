@@ -1,4 +1,3 @@
-
 import React, { useContext, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,7 +8,7 @@ import pb from "../../lib/pocketbase.js";
 import { useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { POCKET_API_URL } from "../constants/urls.js";
-import UserContext  from "../utils/UserContext";
+import UserContext from "../utils/UserContext";
 
 const generateTeamCode = () => {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -23,8 +22,8 @@ const generateTeamCode = () => {
 type TeamMember = {
   id: string;
   name: string;
+  isLeader?: boolean;
 };
-
 
 const Event = () => {
   const { eventId } = useParams();
@@ -37,7 +36,7 @@ const Event = () => {
   const [isRegistering, setIsRegistering] = useState(false);
   const [registrationKey, setRegistrationKey] = useState(0);
 
-  const {userInfo} = useContext(UserContext);
+  const { userInfo } = useContext(UserContext);
 
   const fetchRegistrationDetails = async () => {
     if (!userInfo || !event?.id) return;
@@ -60,7 +59,11 @@ const Event = () => {
             const user = await pb
               .collection("users")
               .getFirstListItem(`id="${id}"`);
-            return { id: id, name: user.username };
+            return { 
+              id: id, 
+              name: user.username,
+              isLeader: id === registration.leader 
+            };
           })
         );
 
@@ -69,11 +72,11 @@ const Event = () => {
       } else {
         setTeamName("");
         setTeamCode("");
-        setTeam([{ id: userInfo.id, name: userInfo.username }]);
+        setTeam([{ id: userInfo.id, name: userInfo.username, isLeader: true }]);
       }
     } catch (error) {
       console.error("Error fetching registration:", error);
-      setTeam([{ id: userInfo.id, name: userInfo.username }]);
+      setTeam([{ id: userInfo.id, name: userInfo.username, isLeader: true }]);
     }
   };
 
@@ -127,7 +130,7 @@ const Event = () => {
         leader: userInfo?.id,
       });
       setTeamCode(generatedTeamCode);
-      setShowRegistration(false);
+      setShowRegistration(true);
       setRegistrationKey((prev) => prev + 1);
       alert(`Your team "${teamName}" has been registered for ${event?.name}`);
     } catch {
@@ -137,13 +140,14 @@ const Event = () => {
     }
   };
 
-
   if (loading) {
     return (
       <>
         <Navbar search={false} />
-        <div className="w-screen min-h-screen flex justify-center items-center pt-20">
-          <Loader2 className="h-10 w-10 animate-spin text-secondary" />
+        <div className="flex bg-background min-h-screen min-w-[calc(100vw_-_6px)] justify-center text-primary-text pt-[15vh]">
+          <div className="w-full flex justify-center items-center">
+            <Loader2 className="h-10 w-10 animate-spin text-secondary" />
+          </div>
         </div>
       </>
     );
@@ -153,7 +157,7 @@ const Event = () => {
     return (
       <>
         <Navbar search={false} />
-        <div className="w-screen min-h-screen flex justify-center items-center pt-20">
+        <div className="flex bg-background min-h-screen min-w-[calc(100vw_-_6px)] justify-center text-primary-text pt-[15vh]">
           <div className="text-center">
             <h2 className="text-2xl font-bold">Error loading event</h2>
             <p className="text-muted-foreground">Please try again later</p>
@@ -166,57 +170,74 @@ const Event = () => {
   return (
     <>
       <Navbar search={false} />
-      <div className="w-screen min-h-screen bg-background text-primary-text pt-20 pb-10">
-        <div className="container mx-auto px-4 max-w-3xl">
-          {/* Hero Image */}
+      <div className="flex bg-background min-h-screen min-w-[calc(100vw_-_6px)] justify-center text-primary-text pt-[10vh] md:pt-[15vh] md:pb-[10vh]">
+        <div className="w-[100%] md:w-[55vw] h-fit flex flex-col gap-5 border-[1px] border-white/20 p-5">
+          {/* Event Title */}
+          <div className="flex flex-col gap-1">
+            <h1 className="text-3xl md:text-4xl font-bold">{event.name}</h1>
+            <div className="text-sm text-muted-foreground">
+              {new Date(event.date).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </div>
+          </div>
+          
+          {/* Event Image */}
           {event.image && (
-            <div className="mb-8">
+            <div>
               <img 
                 src={`${POCKET_API_URL}${event?.collectionId}/${eventId}/${event.image}`}
                 alt={event.name} 
-                className="w-full h-[40vh] object-cover rounded-lg"
+                className="w-full max-h-[60vh] object-cover rounded-lg"
               />
             </div>
           )}
           
-          {/* Event Title */}
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">{event.name}</h1>
+          {/* Event Details */}
+          <div className="flex flex-col gap-3 text-[16px] border-b border-white/20 py-4">
+            <div className="flex items-center space-x-3">
+              <Calendar className="h-12 w-12 text-primary bg-secondary p-3 rounded-md" />
+              <div className="flex flex-col">
+                <span className="text-gray-500 text-sm">Date</span>
+                <span>
+                  {new Date(event.date).toLocaleDateString("en-US", {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </span>
+              </div>
+            </div>
+            
+            <div className="flex items-center space-x-3">
+              <MapPin className="h-12 w-12 text-primary bg-secondary p-3 rounded-md" />
+              <div className="flex flex-col">
+                <span className="text-gray-500 text-sm">Venue</span>
+                <span>{event.location || "Online"}</span>
+              </div>
+            </div>
+            
+            {event.teamSize && (
+              <div className="flex items-center space-x-3">
+                <Users className="h-12 w-12 text-primary bg-secondary p-3 rounded-md" />
+                <div className="flex flex-col">
+                  <span className="text-gray-500 text-sm">Team Size</span>
+                  <span>{event.teamSize}</span>
+                </div>
+              </div>
+            )}
+          </div>
           
           {/* Event Description */}
           <div className="py-5 text-[18px] sm:text-[20px] text-primary-post -tracking-[0.009em] leading-[32px]">
             {event.description}
           </div>
           
-          {/* Event Details */}
-          <div className="my-8 space-y-4 text-[16px] border-t border-b border-border py-6">
-            <div className="flex items-center space-x-3">
-              <Calendar className="h-5 w-5 text-primary" />
-              <span>
-                {new Date(event.date).toLocaleDateString("en-US", {
-                  weekday: "long",
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-              </span>
-            </div>
-            
-            
-            <div className="flex items-center space-x-3">
-              <MapPin className="h-5 w-5 text-primary" />
-              <span>{event.location || "Online"}</span>
-            </div>
-            
-            {event.teamSize && (
-              <div className="flex items-center space-x-3">
-                <Users className="h-5 w-5 text-primary" />
-                <span>Team Size: {event.teamSize} members</span>
-              </div>
-            )}
-          </div>
-          
           {/* Registration Form */}
-          <div className="mt-10 bg-background-light p-6 rounded-lg border border-border">
+          <div className="mt-4 bg-background-light p-6 rounded-lg border border-white/20">
             <h2 className="text-xl font-bold mb-4">Event Registration</h2>
             <p className="text-muted-foreground mb-6">
               {event.teamSize === 1
@@ -230,15 +251,15 @@ const Event = () => {
                   <Label className="text-base">Team Name</Label>
                   {showRegistration ? (
                     <h3 className="font-bold text-xl">{teamName}</h3>
-                ): (
-                  <Input
-                    value={teamName}
-                    onChange={(e) => setTeamName(e.target.value)}
-                    placeholder="Enter team name"
-                    className="bg-background"
-                    required
-                  />
-                )}
+                  ) : (
+                    <Input
+                      value={teamName}
+                      onChange={(e) => setTeamName(e.target.value)}
+                      placeholder="Enter team name"
+                      className="bg-background"
+                      required
+                    />
+                  )}
                 </div>
               )}
               
@@ -293,16 +314,24 @@ const Event = () => {
                 </div>
               )}
               
-              <Button
-                type="submit"
-                className="w-full mt-4"
-                disabled={isRegistering || showRegistration}
-              >
-                {isRegistering && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                )}
-                {showRegistration ? "Registered" : isRegistering ? "Registering..." : "Register"}
-              </Button>
+              {showRegistration ? (
+                <div className="bg-green-900/20 border border-green-500/30 p-4 rounded-md">
+                  <p className="text-green-400 font-medium">
+                    Successfully registered! Your team code is: <span className="font-bold">{teamCode}</span>
+                  </p>
+                </div>
+              ) : (
+                <Button
+                  type="submit"
+                  className="w-full mt-4"
+                  disabled={isRegistering}
+                >
+                  {isRegistering && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  {isRegistering ? "Registering..." : "Register"}
+                </Button>
+              )}
             </form>
           </div>
         </div>

@@ -11,10 +11,10 @@ import React from "react";
 // Define TypeScript interfaces
 interface Event {
   id: string;
-  title: string;
-  text: string;
+  name: string;
+  description: string;
   date: string;
-  venue: string;
+  location: string;
   image?: string;
   created: string;
   expand?: {
@@ -113,12 +113,12 @@ const EventsList = () => {
               <Link
                 to={`/event/${event.id}`}
                 key={event.id}
-                className="bg-background-light rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 border border-border flex flex-col"
+                className="bg-background rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 border border-border flex flex-col"
               >
                 <div className="h-48 w-[18rem] overflow-hidden">
                   <img
                     src={getImageUrl(event)}
-                    alt={event.title}
+                    alt={event.name}
                     className="w-full h-full object-cover"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = "/placeholder-event.jpg";
@@ -126,24 +126,24 @@ const EventsList = () => {
                   />
                 </div>
                 <div className="p-4 flex-1 flex flex-col">
-                  <h2 className="text-xl font-semibold mb-2 line-clamp-2">
-                    {event.name}
+                  <h2 className="text-xl text-black font-semibold mb-2 line-clamp-2">
+                    {event?.name}
                   </h2>
                   <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-                    {event.description}
+                    {event?.description}
                   </p>
                   <div className="mt-auto space-y-2">
                     <div className="flex items-center text-sm text-muted-foreground">
                       <CalendarIcon className="w-4 h-4 mr-2" />
-                      {formatEventDate(event.date)}
+                      {formatEventDate(event?.date)}
                     </div>
                     <div className="flex items-center text-sm text-muted-foreground">
                       <MapPinIcon className="w-4 h-4 mr-2" />
-                      {event.venue || "Online"}
+                      {event?.location || "Online"}
                     </div>
                   </div>
                 </div>
-                {event.venue === "Online" && (
+                {event.location === "Online" && (
                   <Badge className="absolute top-2 right-2 bg-blue-500">
                     Online
                   </Badge>

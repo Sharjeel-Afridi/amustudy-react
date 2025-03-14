@@ -52,7 +52,7 @@ const Navbar = ({ search, onSearch, post }) => {
         to="/"
         className="hover:text-primary-text  font-bold text-primary-text"
       >
-        AMUNIFY
+        Gathr.
       </Link>
       <div className="flex items-center gap-10">
         {post && (
@@ -154,7 +154,7 @@ const Navbar = ({ search, onSearch, post }) => {
                     <span
                       className={classNames(
                         focus ? "bg-gray-100" : "",
-                        "block px-4 py-2 text-sm text-gray-700"
+                        "block px-4 py-2 text-sm text-gray-700 cursor-pointer"
                       )}
                       onClick={handleLogout}
                     >

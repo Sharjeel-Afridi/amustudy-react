@@ -1,54 +1,108 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useLogin from "../utils/useLogin";
 import { Link } from "react-router-dom";
 import Google from '/google.png';
+import { Icons } from "../components/ui/icons";
 
+const Login = () => {
+  const navigate = useNavigate();
+  const { login, handleSubmit, handleOauth } = useLogin();
+  const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-
-const Auth = () => {
-    const { email, setEmail, password, setPassword, login, handleSubmit, handleOauth } = useLogin();
-    const navigate = useNavigate();
-
-    
-
-    if(login){
-        navigate('/');
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      await handleSubmit(e);
+    } catch (error) {
+      console.error("Login error:", error);
+    } finally {
+      setIsLoading(false);
     }
+  };
 
-    return(
-        
-        <div className="flex h-screen w-screen justify-center items-center bg-background text-primary-text">
-            <div className='flex flex-col justify-center items-center gap-5 bg-background-light px-5 py-10 rounded-md'>
-                 {/* <h1 className='text-3xl font-bold'>AMUStudy</h1> */}
-                <h3 className='text-2xl font-semibold'>Login</h3>
-                <form onSubmit={handleSubmit} className='flex flex-col items-center gap-6'>
-                    <input 
-                    type="text" 
-                    className='px-4 py-2 rounded-md bg-transparent focus:outline-none'
-                    value={email} 
-                    onChange={(e)=> setEmail(e.target.value)}
-                    placeholder="Email"
-                    />
+  const onOauthLogin = async () => {
+    setIsLoading(true);
+    try {
+      await handleOauth();
+    } catch (error) {
+      console.error("OAuth login error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-                    <input 
-                    type="password" 
-                    className='px-4 py-2 rounded-md bg-transparent focus:outline-none'
-                    value={password} 
-                    onChange={(e)=>setPassword(e.target.value)}
-                    placeholder="Password"
-                    />
+  if(login) {
+    navigate('/');
+  }
 
-                    <button type="submit" className='bg-green-500 w-[100%] py-2 mt-5 rounded-md text-primary-text hover:border-transparent'>Login</button>
-                </form>
-                <p className='text-sm text-gray-400 '>Or login with</p>
-                <button onClick={handleOauth} className='cursor-pointer bg-white rounded-md w-full flex justify-center'>
+  return (
+    <div className="flex min-h-screen w-screen items-center bg-background text-primary-text">
+      <div className="hidden sm:block h-screen overflow-hidden sm:w-2/6 bg-blue-400">
+        {/* Left sidebar content */}
+      </div>
 
-                <img src={Google}  className='w-[30px]' />
-                </button>
-                <p className='text-slate-500 mt-5'>New to AMUStudy?</p>
-                <Link to="/signup" className='text-slate-300'>Sign up</Link>
-            </div>
+      <div className="w-full sm:w-4/6 h-screen flex flex-col justify-center items-start overflow-auto px-5 sm:px-[6rem] py-[6rem] rounded-md">
+        <h3 className="text-[1.5rem] font-semibold mb-10">Login</h3>
+
+        <form
+          onSubmit={onSubmit}
+          className="flex flex-col items-start gap-5 w-full text-[0.9rem]"
+        >
+          <div className="flex flex-col w-full">
+            <label className="mb-1 font-medium">Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="px-4 py-2 bg-transparent rounded-md border border-gray-300"
+            />
+          </div>
+
+          <div className="flex flex-col w-full">
+            <label className="mb-1 font-medium">Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="px-4 py-2 bg-transparent rounded-md border border-gray-300"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="flex items-center bg-blue-600 py-3 px-8 mt-5 font-medium rounded-md text-white hover:bg-blue-700 transition-colors"
+          >
+            {isLoading && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />}
+            Login
+          </button>
+        </form>
+
+        <div className="mt-5 w-full flex flex-col items-start gap-2">
+          <p className="text-sm text-gray-400 mb-2">Or login with</p>
+          <button
+            onClick={onOauthLogin}
+            className="cursor-pointer bg-white rounded-md py-3 px-8 shadow-md flex justify-center items-center hover:bg-gray-100 transition-colors"
+          >
+            <img src={Google} className="w-[24px] mr-2" alt="Google" />
+            <span className="text-gray-800">Google</span>
+          </button>
+
+          <div className="mt-5 flex items-center gap-2">
+            <p className="text-slate-800 font-medium">New to AMUStudy?</p>
+            <Link to="/signup" className="text-blue-600 hover:text-blue-700">
+              Sign up
+            </Link>
+          </div>
         </div>
-    )
-}
-export default Auth;
+      </div>
+    </div>
+  );
+};
+
+export default Login;
