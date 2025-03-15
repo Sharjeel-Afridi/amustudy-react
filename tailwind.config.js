@@ -20,7 +20,11 @@ export default {
   			source: [
   				'Source Serif Pro',
   				'serif'
-  			]
+  			],
+			kavivanar: [
+                'Kavivanar',
+                'cursive'
+            ]
   		},
   		colors: {
   			primary: {
@@ -88,7 +92,8 @@ export default {
   },
   plugins: [
     forms,
-      require("tailwindcss-animate")
+      require("tailwindcss-animate"),
+	  require("tailwind-scrollbar-hide")
 ],
 }
 

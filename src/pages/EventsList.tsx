@@ -32,6 +32,7 @@ const EventsList = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>('ZHCET');
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -74,8 +75,48 @@ const EventsList = () => {
     <>
       <Navbar search={true} />
       <div className="container mx-auto px-4 py-24 max-w-7xl">
-        <h1 className="text-3xl font-bold mb-8">Upcoming Events</h1>
-
+        <div className="flex flex-col items-center mb-8 text-center w-[calc(100vw-6px-2rem)]">
+          <h1 className="text-3xl font-bold text-blue-900 mb-2">Explore Events</h1>
+          <p className="text-gray-600 dark:text-gray-300">Opportunities that are creating a buzz among your peers!</p>
+        </div>
+        
+        <div className="max-w-[90vw] w-fit mx-auto overflow-hidden pb-2 mb-6 px-0 sm:px-10 relative">
+          <div className="flex justify-start sm:justify-center gap-1 bg-gray-50 py-1 px-10 sm:px-3 text-xs sm:text-sm text-black/80 rounded-full overflow-x-auto scrollbar-hide">
+            {["ZHCET", "Computer Science", "CEC", "MBA", "Commerce", "Arts", "Miscellaneous", "Engineering", "Law", "Medical"].map((category) => (
+              <span
+          key={category}
+          onClick={() => setSelectedCategory(category)}
+          className={`py-1 sm:py-2 px-3 sm:px-5 rounded-full cursor-pointer whitespace-nowrap ${
+            selectedCategory === category ? "bg-white shadow-sm border-[1px]" : "border-transparent border-[1px]"
+          }`}
+              >
+          {category}
+              </span>
+            ))}
+          </div>
+          <button
+            className="h-8 w-8 absolute sm:hidden right-0 top-[40%] transform -translate-y-1/2 bg-gray-200 text-gray-600 rounded-full  shadow-md hover:bg-gray-300"
+            onClick={() => {
+              const container = document.querySelector(".overflow-x-auto");
+              if (container) {
+          container.scrollBy({ left: 200, behavior: "smooth" });
+              }
+            }}
+          >
+            &gt;
+          </button>
+          <button
+            className="h-8 w-8 absolute sm:hidden left-0 top-[40%] transform -translate-y-1/2 bg-gray-200 text-gray-600 rounded-full  shadow-md hover:bg-gray-300"
+            onClick={() => {
+              const container = document.querySelector(".overflow-x-auto");
+              if (container) {
+          container.scrollBy({ left: -200, behavior: "smooth" });
+              }
+            }}
+          >
+            &lt;
+          </button>
+        </div>
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[...Array(6)].map((_, i) => (
@@ -108,14 +149,14 @@ const EventsList = () => {
             <p className="text-lg">No upcoming events found.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mx-auto">
             {events.map((event) => (
               <Link
                 to={`/event/${event.id}`}
                 key={event.id}
-                className="bg-background rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 border border-border flex flex-col"
+                className="w-full font-normal text-xs bg-background rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 border border-border flex flex-col"
               >
-                <div className="h-48 w-[18rem] overflow-hidden">
+                <div className="h-32 sm:h-48 w-full overflow-hidden">
                   <img
                     src={getImageUrl(event)}
                     alt={event.name}
@@ -125,26 +166,26 @@ const EventsList = () => {
                     }}
                   />
                 </div>
-                <div className="p-4 flex-1 flex flex-col">
-                  <h2 className="text-xl text-black font-semibold mb-2 line-clamp-2">
+                <div className="p-3 sm:p-4 flex-1 flex flex-col">
+                  <h2 className="text-base sm:text-xl text-black font-semibold mb-1 sm:mb-2 line-clamp-2">
                     {event?.name}
                   </h2>
-                  <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                  <p className="text-muted-foreground mb-2 sm:mb-4 line-clamp-2">
                     {event?.description}
                   </p>
-                  <div className="mt-auto space-y-2">
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <CalendarIcon className="w-4 h-4 mr-2" />
-                      {formatEventDate(event?.date)}
+                  <div className="mt-auto space-y-1 sm:space-y-2">
+                    <div className="flex items-center  text-muted-foreground">
+                      <CalendarIcon className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-black" />
+                      <span className="truncate">{formatEventDate(event?.date)}</span>
                     </div>
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <MapPinIcon className="w-4 h-4 mr-2" />
-                      {event?.location || "Online"}
+                    <div className="flex items-center text-muted-foreground">
+                      <MapPinIcon className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-black" />
+                      <span className="truncate">{event?.location || "Online"}</span>
                     </div>
                   </div>
                 </div>
                 {event.location === "Online" && (
-                  <Badge className="absolute top-2 right-2 bg-blue-500">
+                  <Badge className="absolute top-2 right-2 bg-blue-500 text-[10px] sm:text-xs">
                     Online
                   </Badge>
                 )}
