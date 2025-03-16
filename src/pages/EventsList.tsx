@@ -15,6 +15,7 @@ interface Event {
   description: string;
   date: string;
   location: string;
+  Department: string;
   image?: string;
   created: string;
   expand?: {
@@ -33,6 +34,7 @@ const EventsList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>('ZHCET');
+  const [filteredEvents, setFilteredEvents] = useState<Event[]>();
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -43,7 +45,10 @@ const EventsList = () => {
           filter: "date != null", // Only get posts with dates (events)
           expand: "user",
         });
-        setEvents(records.items as Event[]);
+        const fetchedEvents = records.items as Event[];
+        setEvents(fetchedEvents);
+        const filtered = fetchedEvents.filter(event => event.Department === 'ZHCET');
+        setFilteredEvents(filtered);
         setError(null);
       } catch (err) {
         console.error("Error fetching events:", err);
@@ -55,6 +60,12 @@ const EventsList = () => {
 
     fetchEvents();
   }, []);
+  
+  useEffect(() => {
+    const filtered = events.filter(event => event.Department === selectedCategory);
+    setFilteredEvents(filtered);
+
+  }, [selectedCategory]);
 
   const getImageUrl = (event: Event) => {
     if (!event.image) return "/placeholder-event.jpg";
@@ -144,13 +155,13 @@ const EventsList = () => {
               Try Again
             </button>
           </div>
-        ) : events.length === 0 ? (
+        ) : filteredEvents.length === 0 ? (
           <div className="text-center p-8">
             <p className="text-lg">No upcoming events found.</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mx-auto">
-            {events.map((event) => (
+            {filteredEvents.map((event) => (
               <Link
                 to={`/event/${event.id}`}
                 key={event.id}

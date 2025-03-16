@@ -6,8 +6,10 @@ type EventDetail = {
   description: string;
   date: Date;
   image: string;
-  teamSize: number;
+  max_team_members: number;
   location: string;
+  Department: string;
+  registration: boolean;
   collectionId: string;
 };
 
@@ -36,8 +38,10 @@ export default function useFetchEventDetails(eventId: string | undefined) {
           description: data.description,
           date: data.date,
           image: data.image,
-          teamSize: data.max_team_members,
+          max_team_members: data.max_team_members,
           location: data.location,
+          Department: data.Department,
+          registration: data.registration,
         });
       } catch (err) {
         setError(err instanceof Error ? err.message : "Unknown error");

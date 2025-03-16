@@ -85,7 +85,7 @@ const Event = () => {
   }, [event?.id, userInfo]);
 
   const handleAddTeammate = async () => {
-    if (newTeammate && team.length < (event?.teamSize || 1)) {
+    if (newTeammate && team.length < (event?.max_team_members || 1)) {
       if (team.some((member) => member.id === newTeammate)) {
         alert("This teammate is already added.");
         return;
@@ -220,12 +220,12 @@ const Event = () => {
               </div>
             </div>
             
-            {event.teamSize && (
+            {event.max_team_members && (
               <div className="flex items-center space-x-3">
                 <Users className="h-12 w-12 text-primary bg-secondary p-3 rounded-md" />
                 <div className="flex flex-col">
                   <span className="text-gray-500 text-sm">Team Size</span>
-                  <span>{event.teamSize}</span>
+                  <span>{event.max_team_members}</span>
                 </div>
               </div>
             )}
@@ -237,16 +237,18 @@ const Event = () => {
           </div>
           
           {/* Registration Form */}
+          {event.registration && (
+            
           <div className="mt-4 bg-background-light p-6 rounded-lg border border-white/20">
             <h2 className="text-xl font-bold mb-4">Event Registration</h2>
             <p className="text-muted-foreground mb-6">
-              {event.teamSize === 1
+              {event.max_team_members === 1
                 ? "Register for this solo event."
                 : "Form your team and register."}
             </p>
             
             <form onSubmit={handleSubmitRegistration} className="space-y-6">
-              {event.teamSize !== 1 && (
+              {event.max_team_members !== 1 && (
                 <div className="space-y-2">
                   <Label className="text-base">Team Name</Label>
                   {showRegistration ? (
@@ -265,7 +267,7 @@ const Event = () => {
               
               <div className="space-y-2">
                 <Label className="text-base">
-                  {event.teamSize === 1 ? "Participant" : "Team Members"}
+                  {event.max_team_members === 1 ? "Participant" : "Team Members"}
                 </Label>
                 <ul className="space-y-2">
                   {team.map((member) => (
@@ -277,7 +279,7 @@ const Event = () => {
                         {member.name} ({member.id})
                         {member.isLeader && (
                           <span className="ml-2 text-xs font-semibold text-secondary">
-                            {event.teamSize === 1 ? "(Participant)" : "(Leader)"}
+                            {event.max_team_members === 1 ? "(Participant)" : "(Leader)"}
                           </span>
                         )}
                       </span>
@@ -295,7 +297,7 @@ const Event = () => {
                 </ul>
               </div>
               
-              {!showRegistration && team.length < (event.teamSize || 1) && (
+              {!showRegistration && team.length < (event.max_team_members || 1) && (
                 <div className="flex space-x-2">
                   <Input
                     value={newTeammate}
@@ -334,6 +336,7 @@ const Event = () => {
               )}
             </form>
           </div>
+          )}
         </div>
       </div>
     </>
