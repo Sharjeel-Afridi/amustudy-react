@@ -143,7 +143,7 @@ const EventRegistration = ({ eventId, eventName, maxTeamMembers }: EventRegistra
   };
 
   return (
-    <div className="h-fit w-[32vw] mt-4  p-6 rounded-lg shadow-sm border-[1px] text-[#00376f]">
+    <div className="sm:sticky sm:top-[18vh] h-fit sm:w-[32vw] mt-4 mx-2 mb-10 p-6 rounded-lg shadow-sm border-[1px] text-[#00376f]">
       <h2 className="text-xl font-bold mb-4 ">Event Registration</h2>
       <p className="text-muted-foreground mb-6">
         {maxTeamMembers === 1

@@ -42,14 +42,12 @@ import { toast } from "@/Hooks/use-toast";
 import React from "react";
 import Editor from "@/components/Editor";
 
-// Modified form schema to include department
+// Modified form schema to make description optional since we'll use Editor content
 const formSchema = z.object({
   eventName: z.string().min(3, {
     message: "Event name must be at least 3 characters.",
   }),
-  description: z.string().min(10, {
-    message: "Description must be at least 10 characters.",
-  }),
+  description: z.string().optional(), // Changed to optional since we'll use editor content
   maxTeamMembers: z.number().int().min(1, {
     message: "Team must have at least 1 member.",
   }),
@@ -61,7 +59,7 @@ const formSchema = z.object({
   }),
   department: z.string({
     required_error: "Please select a department.",
-  }), 
+  }),
   image: z.any().optional(),
   registration: z.boolean(),
 });
@@ -100,6 +98,21 @@ export default function CreateEvent() {
     },
   });
 
+  // Function to save editor content
+  const saveEditorContent = async () => {
+    if (editorRef.current) {
+      try {
+        const content = await editorRef.current.save();
+        setEditorContent(content);
+        return content;
+      } catch (error) {
+        console.error("Failed to save editor data:", error);
+        return null;
+      }
+    }
+    return null;
+  };
+
   // Clean up the preview URL when component unmounts
   useEffect(() => {
     if (photo) {
@@ -120,13 +133,26 @@ export default function CreateEvent() {
       });
       return;
     }
+    
+    // Get editor content
+    const content = await saveEditorContent();
+    
+    if (!content || !content.blocks || content.blocks.length === 0) {
+      toast({
+        title: "Content Required",
+        description: "Please add some content to your event description",
+        variant: "destructive",
+      });
+      return;
+    }
 
     try {
       setIsSubmitting(true);
       
       const formData = new FormData();
       formData.append('name', values.eventName);
-      formData.append('description', values.description);
+      formData.append('description', values.description || "");
+      formData.append('content', JSON.stringify(content.blocks));
       formData.append('max_team_members', values.maxTeamMembers.toString());
       formData.append('date', values.date.toISOString());
       formData.append('location', values.location);
@@ -313,16 +339,17 @@ export default function CreateEvent() {
                       />
                     </div>
                     
+                    {/* Short description field */}
                     <FormField
                       control={form.control}
                       name="description"
                       render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-base font-medium">Description</FormLabel>
+                        <FormLabel className="text-base font-medium">Short Description</FormLabel>
                         <FormControl>
                         <Textarea
-                          placeholder="Describe your event in detail"
-                          className="min-h-32 text-base rounded-lg border-1 border-gray-300 focus:border-blue-500"
+                          placeholder="A brief summary of your event"
+                          className="min-h-20 text-base rounded-lg border-1 border-gray-300 focus:border-blue-500"
                           {...field}
                         />
                         </FormControl>
@@ -330,7 +357,16 @@ export default function CreateEvent() {
                       </FormItem>
                       )}
                     />
-                      {/* <Editor editorRef={editorRef} /> */}
+                    
+                    {/* Editor component for rich text content */}
+                    <div className="space-y-2">
+                      <div className="flex flex-col">
+                        <FormLabel className="text-base font-medium mb-2">Detailed Description</FormLabel>
+                        <div className="border border-gray-300 rounded-lg p-2 min-h-[300px]">
+                          <Editor editorRef={editorRef} />
+                        </div>
+                      </div>
+                    </div>
                     
                     <FormItem>
                       <FormLabel className="text-base font-medium">Event Banner</FormLabel>

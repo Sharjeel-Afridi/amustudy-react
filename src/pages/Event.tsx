@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { POCKET_API_URL } from "../constants/urls.js";
 import EventRegistration from "../components/EventRegistration";
+import { PostContent } from "./Post/PostContent";
 
 const Event = () => {
   const { eventId } = useParams();
@@ -40,7 +41,7 @@ const Event = () => {
   return (
     <>
       <Navbar search={false} />
-      <div className="flex bg-background min-h-screen min-w-[calc(100vw_-_6px)] justify-center sm:justify-around text-primary-text pt-[10vh] md:pt-[15vh] md:pb-[10vh]">
+      <div className="flex sm:flex-row flex-col bg-background min-h-screen min-w-[calc(100vw_-_6px)] justify-center sm:justify-around text-primary-text pt-[10vh] md:pt-[15vh] md:pb-[10vh]">
         <div className="w-[100%] md:w-[55vw] h-fit flex flex-col gap-5 border-[1px] border-white/20 p-5">
           {/* Event Title */}
           <div className="flex flex-col gap-1">
@@ -102,9 +103,7 @@ const Event = () => {
           </div>
           
           {/* Event Description */}
-          <div className="py-5 text-[18px] sm:text-[20px] text-primary-post -tracking-[0.009em] leading-[32px]">
-            {event.description}
-          </div>
+          <PostContent text={event?.description} content={event?.content} />
           
         </div>
           {/* Registration Component */}

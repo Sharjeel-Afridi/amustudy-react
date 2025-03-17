@@ -10,6 +10,7 @@ type EventDetail = {
   location: string;
   Department: string;
   registration: boolean;
+  content: ArrayBuffer;
   collectionId: string;
 };
 
@@ -41,6 +42,7 @@ export default function useFetchEventDetails(eventId: string | undefined) {
           max_team_members: data.max_team_members,
           location: data.location,
           Department: data.Department,
+          content: data.content,
           registration: data.registration,
         });
       } catch (err) {

@@ -1,14 +1,18 @@
 import { useState, useEffect, useContext, useRef } from "react";
 import pb from "../../lib/pocketbase";
 import UserContext from "../utils/UserContext";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { addMonths } from "date-fns";
+import { addMonths, format } from "date-fns";
 import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
 import Editor from "../components/Editor";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { CalendarIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const NewFormPage = () => {
   const [inputText, setInputText] = useState("");
@@ -18,22 +22,11 @@ const NewFormPage = () => {
   const [photoURL, setPhotoURL] = useState(null);
   const [loading, setLoading] = useState(false);
   const [startDate, setStartDate] = useState(null);
-  const [dateSelected, setDateSelected] = useState(false);
   const [venue, setVenue] = useState("Online");
   const [venueDetails, setVenueDetails] = useState("");
   const [editorContent, setEditorContent] = useState(null);
   const editorRef = useRef(null);
 
-  // const handleEditorSave = async () => {
-  //   if (editorRef.current) {
-  //     try {
-  //       const content = await editorRef.current.save();
-  //       setEditorContent(content.blocks);
-  //     } catch (error) {
-  //       console.error('Failed to save editor data:', error);
-  //     }
-  //   }
-  // };
   const saveEditorContent = async () => {
     if (editorRef.current) {
       try {
@@ -47,11 +40,8 @@ const NewFormPage = () => {
     return null;
   };
   const navigate = useNavigate();
-  let date;
 
   const { loggedinUser, userInfo } = useContext(UserContext);
-
-  // const allTags = tagsList?.map((item) => item.label);
 
   useEffect(() => {
     if (photo) {
@@ -79,16 +69,16 @@ const NewFormPage = () => {
     setPhotoURL(null);
   };
 
-  const formData = new FormData();
+  // Calendar date constraints
+  const today = new Date();
+  const maxDate = addMonths(today, 5);
 
   const handlePost = async () => {
-    // await handleEditorSave();
     if (inputText !== "" && title !== "") {
       setLoading(true);
       try {
         const content = await saveEditorContent();
 
-        // await pb.collection('posts').create(formData);
         await pb.collection("posts").create({
           user: userInfo.id,
           title: title,
@@ -121,7 +111,11 @@ const NewFormPage = () => {
   return (
     <>
       <Navbar search={false} />
-      <div className="flex justify-center items-center w-screen min-h-screen px-3 pt-20 pb-10 bg-secondary/90 text-primary-text  font-medium">
+      <div className="flex flex-col justify-center items-center w-screen min-h-screen px-3 pt-20 pb-10 bg-secondary/90 text-primary-text font-medium">
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl font-extrabold text-blue-600 mb-2">Write Exciting Post</h1>
+          <p className="text-gray-600 dark:text-gray-300">Share your amazing event with the community</p>
+        </div>
         <div id="form" className="sm:p-3 sm:w-[60%] w-[90%] border-[1px] bg-background rounded-md shadow-md">
           <div className="flex flex-col items-center justify-start gap-4 mb-4">
             <Input
@@ -202,25 +196,35 @@ const NewFormPage = () => {
 
             <div className="flex justify-between items-center w-full px-2">
               <span>Add To Calendar</span>
-              <button
-                className={`mt-2 p-0 rounded-md`}
-                onClick={() => setDateSelected(true)}
-              >
-                <DatePicker
-                  selected={startDate}
-                  placeholderText="Select Event Date"
-                  onChange={(date) => setStartDate(date)}
-                  minDate={new Date()}
-                  maxDate={addMonths(new Date(), 5)}
-                  className="rounded-md border-[2px] font-medium bg-transparent p-5 w-full  focus:border-black focus:ring-black"
-                />
-              </button>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-[240px] justify-start text-left font-normal",
+                      !startDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {startDate ? format(startDate, "PPP") : "Select Event Date"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="end">
+                  <Calendar
+                    mode="single"
+                    selected={startDate}
+                    onSelect={setStartDate}
+                    disabled={(date) => date < today || date > maxDate}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
 
             <div className="flex flex-col w-full px-2">
               <label className="mb-2">Venue</label>
               <select
-                className="w-full border-[1px] border-white/10 rounded-md p-2 bg-background-light  focus:border-transparent focus:ring-transparent"
+                className="w-full border-[1px] border-white/10 rounded-md p-2 bg-background-light focus:border-transparent focus:ring-transparent"
                 onChange={(e) => setVenue(e.target.value)}
               >
                 <option value="Online">Online</option>

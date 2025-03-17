@@ -287,7 +287,7 @@ export default function Home() {
       )}
       {home ? (
         <main className="min-h-screen w-[100vw] flex flex-col sm:flex-row sm:items-start items-center bg-background text-primary-text font-lato overflow-hidden">
-          <div className="flex flex-col gap-5 items-start pl-2 sm:px-10 w-[100%] sm:w-[72%] pt-[15vh] pb-[10vh] rounded-md ">
+          <div className="flex flex-col gap-5 items-start bg-white pl-2 sm:px-10 w-[100%] sm:w-[72%] pt-[15vh] pb-[10vh] ">
             <h1 className="text-[1.7rem] font-bold pl-2 sm:pl-7">
               Recent Posts
             </h1>
