@@ -57,8 +57,9 @@ const formSchema = z.object({
   location: z.string().min(3, {
     message: "Location must be at least 3 characters.",
   }),
-  department: z.string({
+  department: z.string().min(1, {
     required_error: "Please select a department.",
+    message: "Department is required.",
   }),
   image: z.any().optional(),
   registration: z.boolean(),
@@ -133,7 +134,19 @@ export default function CreateEvent() {
       });
       return;
     }
-    
+    // Validate department is selected
+    if (!values.department) {
+      toast({
+        title: "Department Required",
+        description: "Please select a department for your event",
+        variant: "destructive",
+      });
+      form.setError("department", {
+        type: "manual",
+        message: "Department is required"
+      });
+      return;
+    }
     // Get editor content
     const content = await saveEditorContent();
     
@@ -314,6 +327,9 @@ export default function CreateEvent() {
                           </SelectContent>
                         </Select>
                         <FormMessage className="text-red-500" />
+                        {!field.value && form.formState.isSubmitted && (
+                          <p className="text-sm font-medium text-red-500 mt-1">Please select a department</p>
+                        )}
                         </FormItem>
                       )}
                       />
