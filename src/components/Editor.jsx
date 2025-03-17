@@ -7,6 +7,7 @@ import ImageTool from '@editorjs/image';
 import Embed from '@editorjs/embed';
 import Table from '@editorjs/table';
 import Quote from '@editorjs/quote';
+import '../editor.css';
 
 const DEFAULT_INITIAL_DATA = {
   time: new Date().getTime(),

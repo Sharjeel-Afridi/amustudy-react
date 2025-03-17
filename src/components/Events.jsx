@@ -5,7 +5,7 @@ import React from 'react';
 const Events = ({ events, mobile }) => {
   const navigate = useNavigate();
 
-  const wideScreenStyle = "hidden sm:flex flex-col items-center gap-10 w-[90%] sm:w-[20%] h-screen border-l-[1px] border-primary-dark overflow-y-auto text-primary-text pl-5 pt-[15vh]";
+  const wideScreenStyle = "hidden sm:flex flex-col items-center gap-10 w-[90%] sm:w-[20%] h-screen bg-white mx-auto rounded-lg border-l-[1px] border-primary-dark text-primary-text pl-5 mt-[10vh] pt-5 pb-[4vh]";
   const mobileScreenStyle = "flex flex-col items-center w-[calc(100vw-6px)] min-h-screen gap-10 bg-background text-primary-text mb-[15vh] pt-[15vh]";
 
   const handleEventClick = (id) => {

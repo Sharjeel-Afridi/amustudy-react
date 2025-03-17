@@ -4,9 +4,9 @@ import { Link } from "react-router-dom";
 import UserContext from "../utils/UserContext";
 import { useContext } from "react";
 import useLogout from "../utils/useLogout";
-import ProfilePic from "../../public/profile.png";
+import ProfilePic from "/profile.png";
 import { useNavigate } from "react-router-dom";
-import Plus from "../../public/plus-black.png";
+import Plus from "/plus-black.png";
 import { Fragment } from "react";
 import {
   Menu,
@@ -47,12 +47,12 @@ const Navbar = ({ search, onSearch, post }) => {
   };
 
   return (
-    <div className="sm:h-[10vh] w-[calc(100vw-8px)] flex justify-between items-center text-[15px] sm:text-[1.2rem] bg-background border-b-[1px] border-primary-dark fixed  px-4 sm:px-10 font-medium z-10">
+    <div className="sm:h-[10vh] w-[calc(100vw-8px)] fixed top-0 flex justify-between items-center text-[15px] sm:text-[1.2rem] bg-background border-b-[1px] border-primary-dark  px-4 sm:px-10 font-medium z-10">
       <Link
         to="/"
-        className="hover:text-primary-text  font-bold text-primary-text"
+        className="hover:text-primary-text  text-2xl font-bold text-[#00376f]"
       >
-        AMUNIFY
+        Gathr.
       </Link>
       <div className="flex items-center gap-10">
         {post && (
@@ -154,7 +154,7 @@ const Navbar = ({ search, onSearch, post }) => {
                     <span
                       className={classNames(
                         focus ? "bg-gray-100" : "",
-                        "block px-4 py-2 text-sm text-gray-700"
+                        "block px-4 py-2 text-sm text-gray-700 cursor-pointer"
                       )}
                       onClick={handleLogout}
                     >

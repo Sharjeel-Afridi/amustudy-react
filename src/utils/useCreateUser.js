@@ -1,10 +1,11 @@
 import pb from "../../lib/pocketbase";
-
+import UserContext from "./UserContext";
+import { useContext } from "react";
 export default function useCreateUser(){
     
+    const { updateLoggedinUser } = useContext(UserContext);
     
-    
-    async function createUser(email,username,password,passwordConfirm){
+    async function createUser(email,username,password,passwordConfirm, club, role, isAdmin){
         try{
             const data = {
                 "username": `${username}`,
@@ -12,11 +13,13 @@ export default function useCreateUser(){
                 "emailVisibility": true,
                 "password": `${password}`,
                 "passwordConfirm": `${passwordConfirm}`,
-                "name": ""
+                "club": `${club}`,
+                "role": `${role}`,
+                // "isAdmin": `${isAdmin}`,
             }
             const record = await pb.collection('users').create(data);
             const authData = await pb.collection('users').authWithPassword(email, password);
-           
+            updateLoggedinUser();
             
             // console.log('User created successfully');
         }catch(error){
