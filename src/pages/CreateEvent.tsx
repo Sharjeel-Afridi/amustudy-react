@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,6 +40,7 @@ import pb from "../../lib/pocketbase.js";
 import Navbar from "@/components/Navbar";
 import { toast } from "@/Hooks/use-toast";
 import React from "react";
+import Editor from "@/components/Editor";
 
 // Modified form schema to include department
 const formSchema = z.object({
@@ -84,7 +85,9 @@ export default function CreateEvent() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [photo, setPhoto] = useState(null);
   const [photoURL, setPhotoURL] = useState(null);
-  
+  const [editorContent, setEditorContent] = useState(null);
+  const editorRef = useRef(null);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -327,6 +330,7 @@ export default function CreateEvent() {
                       </FormItem>
                       )}
                     />
+                      {/* <Editor editorRef={editorRef} /> */}
                     
                     <FormItem>
                       <FormLabel className="text-base font-medium">Event Banner</FormLabel>
@@ -394,7 +398,7 @@ export default function CreateEvent() {
                           type="radio"
                           value="yes"
                           checked={field.value === true}
-                          className="h-8 w-8"
+                          className="h-8 w-8 cursor-pointer"
                           onChange={() => field.onChange(true)}
                           />
                           <span>Yes</span>
@@ -404,7 +408,7 @@ export default function CreateEvent() {
                           type="radio"
                           value="no"
                           checked={field.value === false}
-                          className="h-8 w-8"
+                          className="h-8 w-8 cursor-pointer"
                           onChange={() => field.onChange(false)}
                           />
                           <span>No</span>

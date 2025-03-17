@@ -187,7 +187,7 @@ const EventsList = () => {
                   <div className="mt-auto space-y-1 sm:space-y-2">
                     <div className="flex items-center  text-muted-foreground">
                       <CalendarIcon className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-black" />
-                      <span className="truncate">{formatEventDate(event?.date)}</span>
+                        <span className="truncate">{format(new Date(event?.date), "MMMM dd, yyyy")}</span>
                     </div>
                     <div className="flex items-center text-muted-foreground">
                       <MapPinIcon className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-black" />

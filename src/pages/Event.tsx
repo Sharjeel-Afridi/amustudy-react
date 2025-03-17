@@ -1,144 +1,14 @@
-import React, { useContext, useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { X, PlusCircle, Loader2, Calendar, Clock, Users, MapPin } from "lucide-react";
+import React from "react";
+import { Loader2, Calendar, MapPin, Users } from "lucide-react";
 import useFetchEventDetails from "@/utils/useFetchEventDetails";
-import pb from "../../lib/pocketbase.js";
 import { useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { POCKET_API_URL } from "../constants/urls.js";
-import UserContext from "../utils/UserContext";
-
-const generateTeamCode = () => {
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  let code = "";
-  for (let i = 0; i < 8; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return code;
-};
-
-type TeamMember = {
-  id: string;
-  name: string;
-  isLeader?: boolean;
-};
+import EventRegistration from "../components/EventRegistration";
 
 const Event = () => {
   const { eventId } = useParams();
   const { event, loading, error } = useFetchEventDetails(eventId);
-  const [teamName, setTeamName] = useState("");
-  const [team, setTeam] = useState<TeamMember[]>([]);
-  const [teamCode, setTeamCode] = useState("");
-  const [showRegistration, setShowRegistration] = useState(false);
-  const [newTeammate, setNewTeammate] = useState("");
-  const [isRegistering, setIsRegistering] = useState(false);
-  const [registrationKey, setRegistrationKey] = useState(0);
-
-  const { userInfo } = useContext(UserContext);
-
-  const fetchRegistrationDetails = async () => {
-    if (!userInfo || !event?.id) return;
-
-    try {
-      const registrations = await pb
-        .collection("eventRegistrations")
-        .getList(1, 1, {
-          filter: `event="${event.id}" && teamMembers~"${userInfo.id}"`,
-          sort: "-created",
-        });
-
-      if (registrations.items.length > 0) {
-        const registration = registrations.items[0];
-        setTeamName(registration.teamName);
-        setTeamCode(registration.teamCode);
-
-        const teammates = await Promise.all(
-          registration.teamMembers.map(async (id: string) => {
-            const user = await pb
-              .collection("users")
-              .getFirstListItem(`id="${id}"`);
-            return { 
-              id: id, 
-              name: user.username,
-              isLeader: id === registration.leader 
-            };
-          })
-        );
-
-        setTeam(teammates);
-        setShowRegistration(true);
-      } else {
-        setTeamName("");
-        setTeamCode("");
-        setTeam([{ id: userInfo.id, name: userInfo.username, isLeader: true }]);
-      }
-    } catch (error) {
-      console.error("Error fetching registration:", error);
-      setTeam([{ id: userInfo.id, name: userInfo.username, isLeader: true }]);
-    }
-  };
-
-  useEffect(() => {
-    fetchRegistrationDetails();
-  }, [event?.id, userInfo]);
-
-  const handleAddTeammate = async () => {
-    if (newTeammate && team.length < (event?.max_team_members || 1)) {
-      if (team.some((member) => member.id === newTeammate)) {
-        alert("This teammate is already added.");
-        return;
-      }
-
-      try {
-        const userRecord = await pb
-          .collection("users")
-          .getFirstListItem(`id="${newTeammate}"`);
-
-        setTeam([
-          ...team,
-          { id: userRecord.id, name: userRecord.username },
-        ]);
-        setNewTeammate("");
-      } catch (error) {
-        alert(error.status === 404 ? "User not found." : "An error occurred.");
-      }
-    }
-  };
-
-  const handleRemoveTeammate = (id: string) => {
-    if (id === userInfo?.id) {
-      alert("You cannot remove yourself as the leader.");
-      return;
-    }
-    setTeam(team.filter((member) => member.id !== id));
-  };
-  
-  const handleSubmitRegistration = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsRegistering(true);
-    
-    try {
-      const generatedTeamCode = generateTeamCode();
-      // Registration logic
-      await pb.collection("eventRegistrations").create({
-        event: event?.id,
-        teamName: teamName,
-        teamMembers: team.map((member) => member.id),
-        teamCode: generatedTeamCode,
-        leader: userInfo?.id,
-      });
-      setTeamCode(generatedTeamCode);
-      setShowRegistration(true);
-      setRegistrationKey((prev) => prev + 1);
-      alert(`Your team "${teamName}" has been registered for ${event?.name}`);
-    } catch {
-      alert("Error registering your team.");
-    } finally {
-      setIsRegistering(false);
-    }
-  };
 
   if (loading) {
     return (
@@ -170,7 +40,7 @@ const Event = () => {
   return (
     <>
       <Navbar search={false} />
-      <div className="flex bg-background min-h-screen min-w-[calc(100vw_-_6px)] justify-center text-primary-text pt-[10vh] md:pt-[15vh] md:pb-[10vh]">
+      <div className="flex bg-background min-h-screen min-w-[calc(100vw_-_6px)] justify-center sm:justify-around text-primary-text pt-[10vh] md:pt-[15vh] md:pb-[10vh]">
         <div className="w-[100%] md:w-[55vw] h-fit flex flex-col gap-5 border-[1px] border-white/20 p-5">
           {/* Event Title */}
           <div className="flex flex-col gap-1">
@@ -236,108 +106,15 @@ const Event = () => {
             {event.description}
           </div>
           
-          {/* Registration Form */}
-          {event.registration && (
-            
-          <div className="mt-4 bg-background-light p-6 rounded-lg border border-white/20">
-            <h2 className="text-xl font-bold mb-4">Event Registration</h2>
-            <p className="text-muted-foreground mb-6">
-              {event.max_team_members === 1
-                ? "Register for this solo event."
-                : "Form your team and register."}
-            </p>
-            
-            <form onSubmit={handleSubmitRegistration} className="space-y-6">
-              {event.max_team_members !== 1 && (
-                <div className="space-y-2">
-                  <Label className="text-base">Team Name</Label>
-                  {showRegistration ? (
-                    <h3 className="font-bold text-xl">{teamName}</h3>
-                  ) : (
-                    <Input
-                      value={teamName}
-                      onChange={(e) => setTeamName(e.target.value)}
-                      placeholder="Enter team name"
-                      className="bg-background"
-                      required
-                    />
-                  )}
-                </div>
-              )}
-              
-              <div className="space-y-2">
-                <Label className="text-base">
-                  {event.max_team_members === 1 ? "Participant" : "Team Members"}
-                </Label>
-                <ul className="space-y-2">
-                  {team.map((member) => (
-                    <li
-                      key={member.id}
-                      className="flex items-center justify-between bg-secondary/10 p-3 rounded-md"
-                    >
-                      <span>
-                        {member.name} ({member.id})
-                        {member.isLeader && (
-                          <span className="ml-2 text-xs font-semibold text-secondary">
-                            {event.max_team_members === 1 ? "(Participant)" : "(Leader)"}
-                          </span>
-                        )}
-                      </span>
-                      {!showRegistration && !member.isLeader && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleRemoveTeammate(member.id)}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              
-              {!showRegistration && team.length < (event.max_team_members || 1) && (
-                <div className="flex space-x-2">
-                  <Input
-                    value={newTeammate}
-                    onChange={(e) => setNewTeammate(e.target.value)}
-                    placeholder="Enter teammate's ID"
-                    className="bg-background"
-                  />
-                  <Button 
-                    type="button" 
-                    onClick={handleAddTeammate}
-                    variant="outline"
-                  >
-                    <PlusCircle className="h-4 w-4 mr-2" />
-                    Add
-                  </Button>
-                </div>
-              )}
-              
-              {showRegistration ? (
-                <div className="bg-green-900/20 border border-green-500/30 p-4 rounded-md">
-                  <p className="text-green-400 font-medium">
-                    Successfully registered! Your team code is: <span className="font-bold">{teamCode}</span>
-                  </p>
-                </div>
-              ) : (
-                <Button
-                  type="submit"
-                  className="w-full mt-4"
-                  disabled={isRegistering}
-                >
-                  {isRegistering && (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  )}
-                  {isRegistering ? "Registering..." : "Register"}
-                </Button>
-              )}
-            </form>
-          </div>
-          )}
         </div>
+          {/* Registration Component */}
+          {event.registration && eventId && (
+            <EventRegistration 
+              eventId={eventId} 
+              eventName={event.name} 
+              maxTeamMembers={event.max_team_members || 1} 
+            />
+          )}
       </div>
     </>
   );
