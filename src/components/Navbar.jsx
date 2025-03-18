@@ -50,7 +50,7 @@ const Navbar = ({ search, onSearch, post }) => {
     <div className="sm:h-[10vh] w-[calc(100vw-8px)] fixed top-0 flex justify-between items-center text-[15px] sm:text-[1.2rem] bg-background border-b-[1px] border-primary-dark  px-4 sm:px-10 font-medium z-10">
       <Link
         to="/"
-        className="hover:text-primary-text  text-2xl font-bold text-[#00376f]"
+        className="hover:text-primary-text font-mont  text-2xl font-bold text-[#00376f]"
       >
         Gathr.
       </Link>
@@ -77,7 +77,7 @@ const Navbar = ({ search, onSearch, post }) => {
             value={inputText}
             onChange={handleTextChange} 
             />
-            <Button type="submit">Search</Button>
+            <Button type="submit" className="bg-[#00376f] hover:bg-[#00376f]/95">Search</Button>
           </div>
         )}
         {loggedinUser !== "" ? (

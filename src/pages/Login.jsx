@@ -46,8 +46,13 @@ const Login = () => {
 
   return (
     <div className="flex min-h-screen w-screen items-center bg-background text-primary-text">
-      <div className="hidden sm:block h-screen overflow-hidden sm:w-2/6 bg-[#00376f]">
+      <div className="hidden sm:flex sm:flex-col sm:justify-center h-screen overflow-hidden sm:w-2/6 bg-[#00376f] text-white p-8 relative">
         {/* Left sidebar content */}
+        <div className="mb-16 z-10">
+          <h1 className="text-4xl font-bold font-mont mb-3">Gathr.</h1>
+          <p className="text-xl font-light opacity-90 mb-6">Bringing Campus Events to Life!</p>
+          <div className="h-1 w-16 bg-white opacity-60 rounded"></div>
+        </div>
       </div>
 
       <div className="w-full sm:w-4/6 h-screen flex flex-col justify-center items-start overflow-auto px-5 sm:px-[6rem] py-[6rem] rounded-md">

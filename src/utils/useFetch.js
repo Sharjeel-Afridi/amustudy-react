@@ -38,7 +38,10 @@ const useFetchData = () => {
         sort: "-created",
       });
 
-      setEvents(eventList.items);
+      // Sort the events in ascending order of event date
+      const sortedEvents = eventList.items.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+      setEvents(sortedEvents);
        // Cache the events in localStorage
        localStorage.setItem("cachedEvents", JSON.stringify(eventList.items));
 

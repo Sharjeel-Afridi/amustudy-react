@@ -9,7 +9,8 @@ import Settings from './pages/Settings.jsx';
 import Event from './pages/Event.tsx';
 import { UserProvider } from "./utils/UserContext";
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
-import './index.css'
+import './index.css';
+import './App.css';
 import NewFormPage from './pages/formpage.jsx';
 import CreateEvent from './pages/CreateEvent.tsx';
 import EventsList from './pages/EventsList.tsx';
