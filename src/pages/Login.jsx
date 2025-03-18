@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import useLogin from "../utils/useLogin";
 import { Link } from "react-router-dom";
 import Google from '/google.png';
 import { Icons } from "../components/ui/icons";
+import UserContext from "../utils/UserContext";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -11,16 +12,20 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const { updateLoggedinUser } = useContext(UserContext);
+  
   const onSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     try {
       await handleSubmit(e);
+
+      updateLoggedinUser();
     } catch (error) {
       console.error("Login error:", error);
     } finally {
       setIsLoading(false);
+      navigate('/'); 
     }
   };
 
@@ -28,16 +33,16 @@ const Login = () => {
     setIsLoading(true);
     try {
       await handleOauth();
+      updateLoggedinUser();
     } catch (error) {
       console.error("OAuth login error:", error);
     } finally {
       setIsLoading(false);
+      navigate('/');
     }
   };
 
-  if(login) {
-    navigate('/');
-  }
+  
 
   return (
     <div className="flex min-h-screen w-screen items-center bg-background text-primary-text">

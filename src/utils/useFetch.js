@@ -33,7 +33,7 @@ const useFetchData = () => {
        localStorage.setItem("cachedPosts", JSON.stringify(postList));
 
       // Fetch events
-      const eventList = await pb.collection("posts").getList(1, 10, {
+      const eventList = await pb.collection("events").getList(1, 10, {
         filter: 'date != ""',
         sort: "-created",
       });
@@ -41,24 +41,6 @@ const useFetchData = () => {
       setEvents(eventList.items);
        // Cache the events in localStorage
        localStorage.setItem("cachedEvents", JSON.stringify(eventList.items));
-
-      // Fetch likes for each post
-      // const updatedPosts = [];
-
-      // // Loop through each post and fetch likes sequentially
-      // for (let post of postList) {
-      //   try {
-      //     const netLikes = await fetchLikes(post.id);
-      //     post = { ...post, netLikes }; // Create a new object with updated netLikes
-      //   } catch (error) {
-      //     console.error(`Error fetching likes for post ${post.id}:`, error);
-      //     post = { ...post, netLikes: 0 }; // Default to 0 netLikes on error
-      //   }
-      //   updatedPosts.push(post); // Push updated post to the array
-      // }
-      // // Update state with the array of updated posts
-      // setPosts(updatedPosts);
-      // setShowError(false);
 
       
       setShowError(false);

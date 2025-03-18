@@ -5,11 +5,11 @@ import React from 'react';
 const Events = ({ events, mobile }) => {
   const navigate = useNavigate();
 
-  const wideScreenStyle = "hidden sm:flex flex-col items-center gap-10 w-[90%] sm:w-[20%] h-screen bg-white mx-auto rounded-lg border-l-[1px] border-primary-dark text-primary-text pl-5 mt-[10vh] pt-5 pb-[4vh]";
+  const wideScreenStyle = "hidden sm:flex flex-col items-center gap-10 w-[90%] sm:w-[20%] h-screen bg-white rounded-lg border-l-[1px] border-primary-dark text-primary-text pl-5 mt-[10vh] pt-5 pb-[4vh]";
   const mobileScreenStyle = "flex flex-col items-center w-[calc(100vw-6px)] min-h-screen gap-10 bg-background text-primary-text mb-[15vh] pt-[15vh]";
 
   const handleEventClick = (id) => {
-    navigate(`/post/${id}`);
+    navigate(`/event/${id}`);
   };
 
   return (
@@ -33,8 +33,8 @@ const Events = ({ events, mobile }) => {
                 })}
               </span>
               <div className="w-1/2 sm:w-fit">  
-                <h3 className="font-bold sm:text-[17px] text-[20px] sm:cursor-pointer pb-1">{event.title}</h3>
-                <span className="sm:text-[15px] text-[12px] sm:font-normal font-medium">{event.venue}</span>
+                <h3 className="font-bold sm:text-[17px] text-[20px] sm:cursor-pointer pb-1">{event.name}</h3>
+                <span className="sm:text-[13px] text-[12px] sm:font-normal font-medium">{event.location}</span>
               </div>
             </div>
           </div>

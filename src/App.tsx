@@ -341,9 +341,9 @@ export default function Home() {
                           </div>
                         </div>
                       </div>
-                      <div className="flex justify-between">
-                        <div className="w-full sm:w-3/4">
-                          <h3 className="font-bold text-[20px] sm:text-2xl leading-[24px] text-left px-2 cursor-pointer">
+                      <div className="flex flex-col justify-between">
+                        <div className="w-full">
+                          <h3 className="font-bold text-2xl leading-[24px] text-left px-2 cursor-pointer">
                             {post.title}
                           </h3>
                           <p className="mb-4 text-left text-[16px] font-medium text-gray-600 px-2 pt-[8px]">
@@ -351,7 +351,7 @@ export default function Home() {
                           </p>
                         </div>
                         {post.image !== "" && (
-                          <div className="sm:h-[25vh] h-fit w-full sm:w-1/4 hidden sm:flex items-center sm:px-0 pr-2 rounded-lg">
+                          <div className="h-fit w-[40vw] hidden sm:flex items-center sm:px-0 pr-2 rounded-lg">
                             <img
                               src={`https://amustud.pockethost.io/api/files/${post.collectionId}/${post.id}/${post.image}`}
                               className="w-full h-full object-cover sm:rounded-xs rounded-lg"
