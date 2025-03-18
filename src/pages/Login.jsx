@@ -41,7 +41,7 @@ const Login = () => {
 
   return (
     <div className="flex min-h-screen w-screen items-center bg-background text-primary-text">
-      <div className="hidden sm:block h-screen overflow-hidden sm:w-2/6 bg-blue-400">
+      <div className="hidden sm:block h-screen overflow-hidden sm:w-2/6 bg-[#00376f]">
         {/* Left sidebar content */}
       </div>
 
@@ -76,7 +76,7 @@ const Login = () => {
 
           <button
             type="submit"
-            className="flex items-center bg-blue-600 py-3 px-8 mt-5 font-medium rounded-md text-white hover:bg-blue-700 transition-colors"
+            className="flex items-center bg-[#00376f] py-3 px-8 mt-5 font-medium rounded-md text-white transition-colors"
           >
             {isLoading && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />}
             Login
