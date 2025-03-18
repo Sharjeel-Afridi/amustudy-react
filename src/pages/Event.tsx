@@ -6,6 +6,7 @@ import Navbar from "../components/Navbar";
 import { POCKET_API_URL } from "../constants/urls.js";
 import EventRegistration from "../components/EventRegistration";
 import { PostContent } from "./Post/PostContent";
+import { PostImage } from "./Post/PostImage";
 
 const Event = () => {
   const { eventId } = useParams();
@@ -58,10 +59,10 @@ const Event = () => {
           {/* Event Image */}
           {event.image && (
             <div>
-              <img 
-                src={`${POCKET_API_URL}${event?.collectionId}/${eventId}/${event.image}`}
-                alt={event.name} 
-                className="w-full max-h-[60vh] object-cover rounded-lg"
+              <PostImage
+                collectionId={event?.collectionId}
+                postId={event?.id}
+                image={event?.image}
               />
             </div>
           )}

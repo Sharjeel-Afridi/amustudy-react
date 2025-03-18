@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import useLogin from "../utils/useLogin";
 import { Link } from "react-router-dom";
 import Google from '/google.png';
 import { Icons } from "../components/ui/icons";
+import UserContext from "../utils/UserContext";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -11,16 +12,20 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const { updateLoggedinUser } = useContext(UserContext);
+  
   const onSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     try {
       await handleSubmit(e);
+
+      updateLoggedinUser();
     } catch (error) {
       console.error("Login error:", error);
     } finally {
       setIsLoading(false);
+      navigate('/'); 
     }
   };
 
@@ -28,21 +33,26 @@ const Login = () => {
     setIsLoading(true);
     try {
       await handleOauth();
+      updateLoggedinUser();
     } catch (error) {
       console.error("OAuth login error:", error);
     } finally {
       setIsLoading(false);
+      navigate('/');
     }
   };
 
-  if(login) {
-    navigate('/');
-  }
+  
 
   return (
     <div className="flex min-h-screen w-screen items-center bg-background text-primary-text">
-      <div className="hidden sm:block h-screen overflow-hidden sm:w-2/6 bg-blue-400">
+      <div className="hidden sm:flex sm:flex-col sm:justify-center h-screen overflow-hidden sm:w-2/6 bg-[#00376f] text-white p-8 relative">
         {/* Left sidebar content */}
+        <div className="mb-16 z-10">
+          <h1 className="text-4xl font-bold font-mont mb-3">Gathr.</h1>
+          <p className="text-xl font-light opacity-90 mb-6">Bringing Campus Events to Life!</p>
+          <div className="h-1 w-16 bg-white opacity-60 rounded"></div>
+        </div>
       </div>
 
       <div className="w-full sm:w-4/6 h-screen flex flex-col justify-center items-start overflow-auto px-5 sm:px-[6rem] py-[6rem] rounded-md">
@@ -76,7 +86,7 @@ const Login = () => {
 
           <button
             type="submit"
-            className="flex items-center bg-blue-600 py-3 px-8 mt-5 font-medium rounded-md text-white hover:bg-blue-700 transition-colors"
+            className="flex items-center bg-[#00376f] py-3 px-8 mt-5 font-medium rounded-md text-white transition-colors"
           >
             {isLoading && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />}
             Login

@@ -2,9 +2,10 @@ import React, { useState, useEffect, useContext } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { X, PlusCircle, Loader2 } from "lucide-react";
+import { X, PlusCircle, Loader2, LogIn, UserCheck } from "lucide-react";
 import pb from "../../lib/pocketbase.js";
 import UserContext from "../utils/UserContext";
+import { Link } from "react-router-dom";
 
 // Helper function to generate random team code
 const generateTeamCode = () => {
@@ -37,7 +38,8 @@ const EventRegistration = ({ eventId, eventName, maxTeamMembers }: EventRegistra
   const [isRegistering, setIsRegistering] = useState(false);
   const [registrationKey, setRegistrationKey] = useState(0);
 
-  const { userInfo } = useContext(UserContext);
+  // Get the user context to check login status
+  const { userInfo, loggedinUser } = useContext(UserContext);
 
   const fetchRegistrationDetails = async () => {
     if (!userInfo || !eventId) return;
@@ -73,17 +75,22 @@ const EventRegistration = ({ eventId, eventName, maxTeamMembers }: EventRegistra
       } else {
         setTeamName("");
         setTeamCode("");
-        setTeam([{ id: userInfo.id, name: userInfo.username, isLeader: true }]);
+        setTeam(userInfo ? [{ id: userInfo.id, name: userInfo.username, isLeader: true }] : []);
       }
     } catch (error) {
       console.error("Error fetching registration:", error);
-      setTeam([{ id: userInfo.id, name: userInfo.username, isLeader: true }]);
+      if (userInfo) {
+        setTeam([{ id: userInfo.id, name: userInfo.username, isLeader: true }]);
+      }
     }
   };
 
   useEffect(() => {
-    fetchRegistrationDetails();
-  }, [eventId, userInfo]);
+    // Only fetch registration details if the user is logged in
+    if (loggedinUser) {
+      fetchRegistrationDetails();
+    }
+  }, [eventId, userInfo, loggedinUser]);
 
   const handleAddTeammate = async () => {
     if (newTeammate && team.length < (maxTeamMembers || 1)) {
@@ -118,6 +125,13 @@ const EventRegistration = ({ eventId, eventName, maxTeamMembers }: EventRegistra
   
   const handleSubmitRegistration = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Double check user is logged in
+    if (!loggedinUser || !userInfo) {
+      alert("Please log in to register for this event.");
+      return;
+    }
+    
     setIsRegistering(true);
     
     try {
@@ -125,7 +139,7 @@ const EventRegistration = ({ eventId, eventName, maxTeamMembers }: EventRegistra
       // Registration logic
       await pb.collection("eventRegistrations").create({
         event: eventId,
-        teamName: teamName,
+        teamName: teamName || (maxTeamMembers === 1 ? "Solo Participant" : "Team"),
         teamMembers: team.map((member) => member.id),
         teamCode: generatedTeamCode,
         leader: userInfo?.id,
@@ -133,18 +147,48 @@ const EventRegistration = ({ eventId, eventName, maxTeamMembers }: EventRegistra
       setTeamCode(generatedTeamCode);
       setShowRegistration(true);
       setRegistrationKey((prev) => prev + 1);
-      alert(`Your team "${teamName}" has been registered for ${eventName}`);
+      alert(`Your ${maxTeamMembers === 1 ? "registration" : `team "${teamName}"`} has been registered for ${eventName}`);
     } catch (error) {
       console.error("Registration error:", error);
-      alert("Error registering your team.");
+      alert("Error registering. Please try again.");
     } finally {
       setIsRegistering(false);
     }
   };
 
+  // Show login prompt if user is not logged in
+  if (!loggedinUser) {
+    return (
+      <div className="sm:sticky sm:top-[18vh] h-fit sm:w-[32vw] mt-4 mx-2 mb-10 p-6 rounded-lg shadow-sm border-[1px] text-[#00376f]">
+        <h2 className="text-xl font-bold mb-4">Event Registration</h2>
+        <div className="py-6 text-center space-y-4">
+          <div className="flex justify-center mb-4">
+            <div className="p-3 rounded-full bg-blue-100 text-blue-600">
+              <LogIn size={32} />
+            </div>
+          </div>
+          <p className="text-gray-600 mb-6">
+            You need to be logged in to register for this event.
+          </p>
+          <Link to="/login">
+            <Button className="w-full bg-[#00376f] hover:bg-[#00376f]/90">
+              Log In to Register
+            </Button>
+          </Link>
+          <p className="text-sm text-gray-500 mt-4">
+            Don't have an account?{" "}
+            <Link to="/signup" className="text-blue-600 hover:underline">
+              Sign up
+            </Link>
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="sm:sticky sm:top-[18vh] h-fit sm:w-[32vw] mt-4 mx-2 mb-10 p-6 rounded-lg shadow-sm border-[1px] text-[#00376f]">
-      <h2 className="text-xl font-bold mb-4 ">Event Registration</h2>
+      <h2 className="text-xl font-bold mb-4">Event Registration</h2>
       <p className="text-muted-foreground mb-6">
         {maxTeamMembers === 1
           ? "Register for this solo event."
@@ -163,7 +207,7 @@ const EventRegistration = ({ eventId, eventName, maxTeamMembers }: EventRegistra
                 onChange={(e) => setTeamName(e.target.value)}
                 placeholder="Enter team name"
                 className="bg-background text-black"
-                required
+                required={maxTeamMembers > 1}
               />
             )}
           </div>
@@ -222,8 +266,12 @@ const EventRegistration = ({ eventId, eventName, maxTeamMembers }: EventRegistra
         
         {showRegistration ? (
           <div className="bg-green-900/20 border border-green-500/30 p-4 rounded-md">
+            <div className="flex items-center mb-2">
+              <UserCheck className="h-5 w-5 mr-2 text-green-500" />
+              <span className="font-medium text-green-500">Registration Confirmed</span>
+            </div>
             <p className="text-green-400 font-medium">
-              Successfully registered! Your team code is: <span className="font-bold">{teamCode}</span>
+              Your team code is: <span className="font-bold">{teamCode}</span>
             </p>
           </div>
         ) : (

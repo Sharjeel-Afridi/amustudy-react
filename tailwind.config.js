@@ -18,13 +18,13 @@ export default {
   				'sans-serif'
   			],
   			source: [
-  				'Source Serif Pro',
+  				'Source Serif 4',
   				'serif'
   			],
-			kavivanar: [
-                'Kavivanar',
-                'cursive'
-            ]
+			iansui: [
+				'Iansui',
+				'sans-serif'
+			  ]
   		},
   		colors: {
   			primary: {

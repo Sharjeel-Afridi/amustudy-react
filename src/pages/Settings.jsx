@@ -13,7 +13,7 @@ export default function Profile() {
   const [photoURL, setPhotoURL] = useState(null);
   
   const navigate = useNavigate();
-  // console.log(username);
+  console.log(userInfo);
 
 
   const handlePhotoChange = (e) => {

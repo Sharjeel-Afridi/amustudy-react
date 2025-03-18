@@ -22,8 +22,8 @@ const NewFormPage = () => {
   const [photoURL, setPhotoURL] = useState(null);
   const [loading, setLoading] = useState(false);
   const [startDate, setStartDate] = useState(null);
-  const [venue, setVenue] = useState("Online");
-  const [venueDetails, setVenueDetails] = useState("");
+  // const [venue, setVenue] = useState("Online");
+  // const [venueDetails, setVenueDetails] = useState("");
   const [editorContent, setEditorContent] = useState(null);
   const editorRef = useRef(null);
 
@@ -74,37 +74,57 @@ const NewFormPage = () => {
   const maxDate = addMonths(today, 5);
 
   const handlePost = async () => {
-    if (inputText !== "" && title !== "") {
-      setLoading(true);
-      try {
-        const content = await saveEditorContent();
-
-        await pb.collection("posts").create({
-          user: userInfo.id,
-          title: title,
-          text: inputText,
-          tags: null,
-          date: startDate,
-          image: photo,
-          venue: venue === "physical" ? venueDetails : venue,
-          content: content.blocks,
-        });
-
-        // Clear the form after successful post
-        setTitle("");
-        setInputText("");
-        setTags([]);
-        setPhoto(null);
-        setPhotoURL(null);
-        setEditorContent(null);
-      } catch (error) {
-        console.error("Error creating post:", error);
-      } finally {
+    // Validate required fields
+    if (!title.trim()) {
+      alert("Please enter a title for your post");
+      return;
+    }
+  
+    if (!inputText.trim()) {
+      alert("Please enter a description for your post");
+      return;
+    }
+  
+    if (!photo) {
+      alert("Please upload an image for your post");
+      return;
+    }
+  
+    setLoading(true);
+    try {
+      const content = await saveEditorContent();
+      
+      if (!content || !content.blocks || content.blocks.length === 0) {
+        alert("Please add some content to your post");
         setLoading(false);
-        navigate("/");
+        return;
       }
-    } else {
-      alert("Cannot post empty fields!!");
+  
+      await pb.collection("posts").create({
+        user: userInfo.id,
+        title: title,
+        text: inputText,
+        tags: null,
+        date: startDate,
+        image: photo,
+        // venue: venue === "physical" ? venueDetails : venue,
+        content: content.blocks,
+      });
+  
+      // Clear the form after successful post
+      setTitle("");
+      setInputText("");
+      setTags([]);
+      setPhoto(null);
+      setPhotoURL(null);
+      setEditorContent(null);
+      
+      navigate("/");
+    } catch (error) {
+      console.error("Error creating post:", error);
+      alert("Failed to create post. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -219,26 +239,6 @@ const NewFormPage = () => {
                   />
                 </PopoverContent>
               </Popover>
-            </div>
-
-            <div className="flex flex-col w-full px-2">
-              <label className="mb-2">Venue</label>
-              <select
-                className="w-full border-[1px] border-white/10 rounded-md p-2 bg-background-light focus:border-transparent focus:ring-transparent"
-                onChange={(e) => setVenue(e.target.value)}
-              >
-                <option value="Online">Online</option>
-                <option value="physical">Physical</option>
-              </select>
-              {venue === "physical" && (
-                <Input
-                  type="text"
-                  className="mt-2"
-                  placeholder="Enter Venue"
-                  value={venueDetails}
-                  onChange={(e) => setVenueDetails(e.target.value)}
-                />
-              )}
             </div>
 
             <button
