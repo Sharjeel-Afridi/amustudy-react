@@ -28,7 +28,10 @@ const useFetchData = () => {
         expand: "user, tags",
       });
 
-      setPosts(postList);
+      // Filter out posts where hide is true
+      const visiblePosts = postList.filter(post => !post.hide);
+
+      setPosts(visiblePosts);
        // Cache the posts in localStorage
        localStorage.setItem("cachedPosts", JSON.stringify(postList));
 

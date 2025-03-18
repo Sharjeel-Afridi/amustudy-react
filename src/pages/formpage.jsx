@@ -133,7 +133,7 @@ const NewFormPage = () => {
       <Navbar search={false} />
       <div className="flex flex-col justify-center items-center w-screen min-h-screen px-3 pt-20 pb-10 bg-secondary/90 text-primary-text font-medium">
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-extrabold text-blue-600 mb-2">Write Exciting Post</h1>
+          <h1 className="text-3xl font-extrabold text-[#00376f] mb-2">Write Exciting Post</h1>
           <p className="text-gray-600 dark:text-gray-300">Share your amazing event with the community</p>
         </div>
         <div id="form" className="sm:p-3 sm:w-[60%] w-[90%] border-[1px] bg-background rounded-md shadow-md">

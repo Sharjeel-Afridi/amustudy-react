@@ -206,12 +206,12 @@ export default function CreateEvent() {
         <div className="container mx-auto px-4">
           <div className="w-[80vw] mx-auto">
             <div className="mb-8 text-center">
-              <h1 className="text-3xl font-extrabold text-blue-600 mb-2">Create Your Event</h1>
+              <h1 className="text-3xl font-mont font-extrabold text-[#00376f] mb-2">Create Your Event</h1>
               <p className="text-gray-600 dark:text-gray-300">Share your amazing event with the community</p>
             </div>
             
             <Card className="shadow-none border-0 overflow-hidden">
-              <CardHeader className="text-blue-800 py-6">
+              <CardHeader className="text-[#00376f] py-6">
                 <CardTitle className="text-2xl font-bold flex items-center">
                   <CalendarIcon className="mr-2 h-6 w-6" />
                   Event Details
