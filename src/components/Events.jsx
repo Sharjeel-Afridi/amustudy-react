@@ -49,8 +49,8 @@ Events.propTypes = {
   events: PropTypes.arrayOf(
     PropTypes.shape({
       date: PropTypes.string.isRequired,
-      title: PropTypes.string.isRequired,
-      venue: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      location: PropTypes.string.isRequired,
       id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired, // Assuming 'id' is either a string or number
     })
   ).isRequired,
